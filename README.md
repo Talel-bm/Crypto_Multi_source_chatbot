@@ -18,4 +18,6 @@ The techniques used in this project focus on scalability, meaning the system can
     *   Any unrelated question, even if related to DeFi/crypto in general, is directed to the base LLM.
     *   The fine-tuned router achieves a performant F1 score of **0.85**.
 * **Evaluation with LangSmith** : we evaluated the pipeline with LangSmith and provided screenshots of the results
-The implementations for these key components reside in separate folders within the project. The main `app.py` file serves as both the backend logic orchestrator and the frontend for the Streamlit chatbot interface.
+The implementations for these key components reside in separate folders within the project.
+
+The main `app.py` file serves as both the backend logic orchestrator and the frontend for the Streamlit chatbot interface.
