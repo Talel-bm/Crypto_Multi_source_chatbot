@@ -1,3 +1,4 @@
+from vars import DEEPSEEK_API, GEMINI_API_KEY, SERPER_API_KEY, CHROMA_DB_PATH, CHROMA_COLLECTION_NAME
 from funcs import *
 import streamlit as st
 import os
@@ -12,11 +13,6 @@ import chromadb
 from transformers import pipeline
 import torch
 
-# --- Configuration & Initialization --
-GEMINI_API_KEY = "AIzaSyCdKtfn0DKBGM2-gHz7QhC2gQ9n_RwCp24"
-SERPER_API_KEY = "d344269243f014bd0948537d081cc0178c23faa4"
-CHROMA_DB_PATH= "./DOC DB"
-CHROMA_COLLECTION_NAME ="crypto_db"
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
