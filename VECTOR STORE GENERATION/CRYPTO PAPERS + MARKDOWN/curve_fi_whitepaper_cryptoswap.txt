@@ -1,0 +1,101 @@
+# Automatic market-making with dynamic peg
+
+Michael Egorov, Curve Finance (Swiss Stake GmbH)
+
+June 9, 2021
+
+## Introduction
+
+Automatic market-makers (AMMs) are one of the major innovations which decentralized finance brought. First, Uniswap brought markets created by x·y = k invariant which doesn't make any assumption about pricing of underlying assets and spreads liquidity across all prices evenly. Next, we introduced the stableswap invariant which allowed to focus most of liquidity around price 1.0 (or really any price), a very useful feature for creating stablecoin-to-stablecoin liquidity.
+
+In this work, we describe a method for creating liquidity for assets which aren't necessarily pegged to each other in a way more efficient than x · y = k invariant. We concentrate liquidity given by the current "internal oracle" price but only move that price when the loss is smaller than part of the profit which the system makes. This creates 5 − 10 times higher liquidity than the Uniswap invariant, as well as higher profits for liquidity providers.
+
+We describe the method in general, the invariants chosen, limits of their applicability and results of simulations based on historic pricing data.
+
+## Transformed pegged invariants
+
+Let's transform the price space in such a way that all the prices are converted from some target to the area close to 1 by a transformation T(). We already do that with compound and y pools on curve.fi. Let the vector of balances in the smart contract be b = (b0, b1, . . .) where b<sup>i</sup> is balance of i-th token supported by the pool. Let the contract keep the internal set of coefficient p = (p0, p1, . . .) which we call price\_scale in the code. Then real balances b and transformed balances b 0 can be converted between each other as:
+
+$$\mathbf{b} = T(\mathbf{b}', \mathbf{p}) = (b\_0' p\_0, b\_1' p\_1, \dots);$$
+
+$$\mathbf{b}' = T^{-1}(\mathbf{b}, \mathbf{p}) = \left(\frac{b\_0}{p\_0}, \frac{b\_1}{p\_1}, \dots\right)$$
+
+.
+
+An invariant can be represented as a hypersurface (a curve if the number of dimensions is 2) given by:
+
+![](_page_1_Figure_0.jpeg)
+
+Figure 1: Comparison of AMM invariants: constant-product (dashed line), stableswap (blue) and from this work (orange)
+
+$$I(\mathbf{b}') = 0.$$
+
+The invariant function is convenient to choose in such a way that p<sup>0</sup> = 1 (for example, 0-th asset is USD ant all prices are measured relative to USD). The invariants we consider are constructed in such a way that:
+
+$$\forall x: I \left(x, x, \ldots \right) = 0.$$
+
+One example of such an invariant is stableswap invariant. Another is the one which is discussed here further. Both are presented on Figure 1.
+
+The particular curve depends on deposits in pools. It is convenient to define an invariant D which is constant for the same curve in such a way that it is equal to the total deposits in the pool when it is in equilibrium:
+
+$$\begin{aligned} \mathbf{x}\_{eq} &= \left( x\_{eq}, x\_{eq}, \dots \right), \\\\ I(\mathbf{x}\_{eq}, D) &= 0, \\\\ D &= N x\_{eq}. \end{aligned}$$
+
+Since D essentially parametrizes the curve, the equilibrium point xeq (the one vector p pegs to) becomes trivial to obtain. N here is number of coins.
+
+## Quantification of a repegging loss
+
+In order to quantify profits or losses we need a robust measure of profit. For that, we choose the value of constant-product invariant at equilibrium point. For convenience, we also convert the loss/profit function to balances at the power of 1. The resulting function which quantifies value of the portfolio without noise reads as:
+
+$$X\_{cp} = \left(\prod \frac{D}{Np\_i}\right)^{\#}.$$
+
+When we change p, the price peg changes but balances don't. We can calculate the new D for the new values of b <sup>0</sup> and substitute new D and p<sup>i</sup> to calculate Xcp. We allow the reduction in Xcp but only such that the loss of value of Xcp doesn't exceed half the profit we've made (which we track by tracking the increase of Xcp).
+
+## CurveCrypto invariant
+
+The invariant we use here is encouraged by stableswap invariant:
+
+$$KD^{N-1} \sum x\_i + \prod x\_i = KD^N + \left(\frac{D}{N}\right)^N,$$
+
+however we define K slightly differently:
+
+$$K\_0 = \frac{\prod x\_i \, N^N}{D^N}, \qquad K = A K\_0 \frac{\gamma^2}{(\gamma + 1 - K\_0)^2},$$
+
+where A is amplification coefficient and γ > 0 (but usually a small number) has a meaning of distance between two dashed curve in Fig. 1. The invariant works approximately as a superposition of constant-product and stableswap invariants.
+
+For solving this invariant against x<sup>j</sup> or D, we need to define it in a form F(x, D) = 0:
+
+$$F(\mathbf{x}, D) = K(\mathbf{x}, D) \, D^{N-1} \sum x\_i + \prod x\_i - K(\mathbf{x}, D) \, D^N - \left(\frac{D}{N}\right)^N \dots$$
+
+The algorithm for swaps firstly solves F(x, D) = 0 equation against D, then against x<sup>j</sup> given x<sup>i</sup> which is increased by the amount of coin i which is traded in (just like it was done in curve/stableswap algorithm for stablecoins). We use Newton's method for that: firstly calculating D iteratively as Dk+1 = D<sup>k</sup> − F(x, Dk)/F<sup>0</sup> <sup>D</sup>(x, Dk) and xi,k+1 = xi,k − F(xi,k, . . . , D)/F<sup>0</sup> xi (xi,k, . . . , D). Since all the logic is implemented for EVM, each calculation is optimized, so finding a solution for D or x<sup>i</sup> takes about 35k gas.
+
+Initial values are very important for the correct convergence of Newton's method here since the function is not monotonic. We have found that the best initial values are:
+
+$$\begin{aligned} D\_0 &= N \left( \prod x\_k \right)^{\#}, \\\\ x\_{i,0} &= \frac{D^{N-1}}{\prod\_{k \neq i} x\_k N^{N-1}}. \end{aligned}$$
+
+In addition to initial values, we determined limits of applicability of the math above by fuzzing (using hypothesis framework). We find that (while all noninteger numbers are taken at the basis of 1018) safe values for convergence of x<sup>i</sup> are 0.1 ≤ D ≤ 10<sup>15</sup> [USD]; 5·10−<sup>3</sup> < xi/D < 200; 10−<sup>8</sup> ≤ γ ≤ 10−<sup>2</sup> (typically 10−<sup>4</sup> ); for convergence of D the values are 1 ≤ A ≤ 10000, 10−<sup>9</sup> ≤ x<sup>0</sup> ≤ 10<sup>15</sup> , 10<sup>−</sup><sup>5</sup> ≤ xi/x<sup>0</sup> ≤ 10<sup>5</sup> , 10<sup>−</sup><sup>8</sup> ≤ γ ≤ 10<sup>−</sup><sup>2</sup> .
+
+## Algorithm for repegging
+
+First of all, we track Xcp at every exchange or deposit. After every operation, we multiply a variable xcp\_profit by Xcp,af ter/Xcp,before, starting with 1.0. We also have a variable xcp\_profit\_real which keeps track of all losses after p adjustments. We undo p adjustment if it causes xcp\_profit\_real-1 to fall lower than half of xcp\_profit-1.
+
+Internally, we have a price oracle given by an exponential moving average applied in N-dimensional price space. Suppose that the last reported price is plast, and the update happened t seconds ago while the half-time of the EMA is T1/2. Then the oracle price p ∗ is given as:
+
+$$
+\alpha = 2^{-\frac{t}{T\_{1/2}}},
+$$
+
+$$
+\mathbf{p}^\* = \mathbf{p}\_{last} \left(1 - \alpha\right) + \alpha \mathbf{p}\_{prev}^\*.
+$$
+
+We adjust the price vector in the direction towards p ∗ in log space, however we do that with approximations in order to simplify computations (so the direction could be a little bit different from the ideal (p <sup>∗</sup> − p) vector with the relative price change step being s, for i-th component:
+
+$$\frac{p\_i}{p\_{i,prev}} = 1 + \frac{s}{\sqrt{\sum \left(\frac{p\_j^\*}{p\_{j,prev}} - 1\right)^2}} \left(\frac{p\_i^\*}{p\_{i,prev}} - 1\right).$$
+
+## Dynamic fees
+
+We have a fee f ranging from fmid to fout. It is determined as:
+
+$$g = \frac{\gamma\_{free}}{\gamma\_{free} + 1 - \frac{\prod x\_i}{\left(\sum x\_i/N\right)^N}},$$
+
+$$f = g \cdot f\_{mid} + (1 - g) \cdot f\_{out}$$

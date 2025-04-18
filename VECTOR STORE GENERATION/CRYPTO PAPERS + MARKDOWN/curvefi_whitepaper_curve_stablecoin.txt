@@ -1,0 +1,137 @@
+#### Curve stablecoin design
+
+Michael Egorov, Curve Finance
+
+October 9, 2022
+
+## Overview
+
+The design of the stablecoin has few concepts: lending-liquidating amm algorithm (LLAMMA), PegKeeper, Monetary Policy are the most important ones. But the main idea is in LLAMMA: replacing liquidations with a special-purpose AMM.
+
+![](_page_0_Figure_5.jpeg)
+
+Figure 1: Overall schematic
+
+![](_page_1_Figure_0.jpeg)
+
+Figure 2: Dependence of the loss on the price shift relative to the liquidation theshold. Time window for the observation is 3 days
+
+In this design, if someone borrows against collateral, even at liquidation threshold, and the price of collateral dips and bounces - no significant loss happen. For example, according to simulations using historic data for ETH/USD since Sep 2017, if one leaves the CDP unattended for 3 days and during this time the price drop of 10% below the liquidation theshold happened - only 1% of collateral gets lost.
+
+# AMM for continuous liquidation/deliquidation (LLAMMA)
+
+The core idea of the stablecoin design is Lending-Liquidating AMM Algorithm. The idea is that it converts between collateral (for example, ETH) and the stablecoin (let's call it USD here). If the price of collateral is high - a user has deposits all in ETH, but as it goes lower, it converts to USD. This is very different from traditional AMM designs where one has USD on top and ETH on the bottom instead.
+
+The below description doesn't serve as a fully self-consistent rigurous proofs. A lot of that (especially the invariant) are obtained from dimensional considerations. More research might be required to have a full mathematical description, however the below is believed to be enough to implement in practice.
+
+This is only possible with an external price oracle. In a nutshell, if one makes a typical AMM (for example with a bonding curve being a piece of hyperbola)
+
+![](_page_2_Figure_0.jpeg)
+
+Figure 3: Behavior of an "AMM with an external price source". External price pcenter determines a price around which liquidity is formed. AMM supports liquidity concentrated from prices pcd to pcu, pcd < pcenter < pcu. When current price p is out of range between pcd and pcu, AMM is either fully in stablecoin (when at pcu) or fully in collateral (when at pcd). When pcd ≤ p ≤ pcu, AMM price is equal to the current price p.
+
+![](_page_2_Figure_2.jpeg)
+
+Figure 4: AMM which we search for. We seek to construct an AMM where pcd and pcu are such functions of p<sup>o</sup> that when p<sup>o</sup> grows, they grow even faster. In this case, this AMM will be all in ETH when ETH is expensive, and all in USD when ETH is cheap.
+
+and ramps its "center price" from (for example) down to up, the tokens will adiabatically convert from (for example) USD to ETH while proving liquidity in both ways on the way (Fig. 3). It is somewhat similar to avoided crossing (also called Landau-Zener transition) in quantum physics (though only as an idea: mathematical description of the process could be very different). The range where the liquidity is concentrated is called band here, at the constant p<sup>o</sup> band has liquidity from pcd to pcu. We seek for pcd(po) and pcu(po) being functions of p<sup>o</sup> only, functions being more steep than linear and, hence, growing faster than po(Fig. 4). In addition, let's define prices p↓and p<sup>↑</sup> being prices where p↓(po) = po, and p↑(po) = po, definining ends of bands in adiabatic limit (e.g. p = po).
+
+We start from a number of bands where, similarly to Uniswap3, hyperbolic shape of the bonding curve is preserved by adding virtual balances. Let say, the amount of USD is x, and the amount of ETH is y, therefore the "amplified" constant-product invariant would be:
+
+$$I = \left(x + f\right)\left(y + g\right). \tag{1}$$
+
+We also can denote x <sup>0</sup> ≡ x + f and y <sup>0</sup> ≡ y + g so that the invariant can be written as a familiar I = x 0y 0 .
+
+However, f and g do not stay constant: they change with the external price oracle (and so does the invariant I, so it is only the invariant while the oracle price p<sup>o</sup> is unchanged). At a given po, f and g are constant across the band. As mentioned before, we denote p<sup>↑</sup> as the top price of the band and p↓as the bottom price of the band. We define A (a measure of concentration of liquidity) in such a way that:
+
+$$\frac{p\_{\downarrow}}{p\_{\uparrow}} = \frac{A-1}{A}.\tag{2}$$
+
+The property we are looking for is such that higher price p<sup>o</sup> should lead to even higher price at the same balances, so that the current market price (which will, on average, follow po) is lower than that, and the band will trade towards being all in ETH (and the opposite is also true for the other direction). It is possible to find many ways to satisfy that but we need one:
+
+$$f = \frac{p\_o^2}{p\_\uparrow} A y\_0, \qquad g = \frac{p\_\uparrow}{p\_o} \left(A - 1\right) y\_0,\tag{3}$$
+
+where y<sup>0</sup> is a p0-dependent measure of deposits in the current band, denominated in ETH, defined in such a way that when current price p, p<sup>↑</sup> and p<sup>o</sup> are equal to each other, then y = y<sup>0</sup> and x = 0 (see the point at p<sup>o</sup> = p<sup>↑</sup> on Fig. 4). Then if we substitute y at that moment:
+
+$$I = p\_o A^2 y\_0^2. \tag{4}$$
+
+Price is equal to dx<sup>0</sup>/dy<sup>0</sup> which then for a constant-product invariant is:
+
+$$p = \frac{dx'}{dy'} = \frac{x'}{y'} = \frac{f+x}{g+y}.\tag{5}$$
+
+One can substitute situations where p<sup>o</sup> = p<sup>↑</sup> or p<sup>o</sup> = p<sup>↓</sup> with x = 0 or y = 0 correspndingly to verify that the above formulas are self-consistent.
+
+Typically for a band, we know p<sup>↑</sup> and, hence, p↓, po, constant A, and also x and y (current deposits in the band). To calculate everything, we need to find yo. It can be found by solving the quadratic equation for the invariant:
+
+$$
+\left(\frac{p\_o^2}{p\_\uparrow} A y\_0 + x\right) \left(\frac{p\_\uparrow}{p\_o} \left(A - 1\right) y\_0 + y\right) = p\_o A^2 y\_0^2,\tag{6}
+$$
+
+which turns into the quadratic equation against yo:
+
+$$p\_o A y\_0^2 - y\_0 \left(\frac{p\_\uparrow}{p\_o} \left(A - 1\right) x + \frac{p\_o^2}{p\_\uparrow} A y\right) - xy = 0. \tag{7}$$
+
+In the smart contract, we solve this quadratic equation in get\_y0 function.
+
+While oracle price p<sup>o</sup> stays constant, the AMM works in a normal way, e.g. sells ETH when going up / buys ETH when going down. By simply substituting x = 0 for the "current down" price pcdor y = 0 for the "current up" price pcu values into the equation of the invariant respectively, it is possible to show that AMM prices at the current value of p<sup>o</sup> and the current value of p<sup>↑</sup> are:
+
+$$p\_{cd} = \frac{p\_o^3}{p\_\uparrow^2}, \qquad p\_{cu} = \frac{p\_o^3}{p\_\downarrow^2}. \tag{8}$$
+
+Another practically important question is: if price changes up or down so slowly that the oracle price p<sup>o</sup> is fully capable to follow it adiabatically, what amount y<sup>↑</sup> of ETH (if the price goes up) or x<sup>↓</sup> of USD (if the price goes down) will the band end up with, given current values x and y and that we start also at p = po. While it's not an immediately trivial mathematical problem to solve, numeric computations showed a pretty simple answer:
+
+$$y\_{\uparrow} = y + \frac{x}{\sqrt{p \uparrow p}},\tag{9}$$
+
+$$x\_\downarrow = x + y\sqrt{p\downarrow p}.\tag{10}$$
+
+We will use these results when evaluating safety of the loan as well as the potential losses of the AMM.
+
+Now we have a description of one band. We split all the price space into bands which touch each other with prices p<sup>↓</sup> and p<sup>↑</sup> so that if we set a base price pbase and have a band number n:
+
+$$p\_\uparrow(n) = \left(\frac{A-1}{A}\right)^n p\_{base}, \qquad p\_\downarrow(n) = \left(\frac{A-1}{A}\right)^{n+1} p\_{base}.\tag{11}$$
+
+It is possible to prove that the solution of Eq. 7 and Eq. 5 for any band gives:
+
+$$p\left(x=0, y>0, n\right) = p\_{cd}\left(n\right) = p\_{cu}\left(n-1\right),\tag{12}$$
+
+$$p\left(x>0, y=0, n\right) = p\_{cu}\left(n\right) = p\_{cd}\left(n+1\right),\tag{13}$$
+
+which shows that there are no gaps between the bands.
+
+Trades occur while preserving the invariant from Eq. 1, however the current price inside the AMM shifts when the price po: it goes up when p<sup>o</sup> goes down and vice versa cubically, as can be seen from Eq. 8.
+
+### LLAMMA vs Stablecoin
+
+Stablecoin is a CDP where one borrows stablecoin against a volatile collateral (cryptocurrency, for example, against ETH). The collateral is loaded into LLAMMA in such a price range (such bands) that if price of collateral goes down relatively slowly, the ETH gets converted into enough stablecoin to cover closing the CDP (which can happen via a self-liquidation, or via an external liquidation if the coverage is too close to dangerous limits, or not close at all while waiting for the price bounce).
+
+When a user deposits collateral and borrows a stablecoin, the LLAMMA smart contract calculates the bands where to locate the collateral. When the price of the collateral changes, it starts getting converted to the stablecoin. When the system is "underwater", user already has enough USD to cover the loan. The amount of stablecoins which can be obtained can be calculated using a public get\_x\_down method. If it gives values too close to the liquidation thresholds - an external liquidator can be involved (typically shouldn't happen within a few days or even weeks after the collateral price went down and sideways, or even will not happen ever if collateral price never goes up or goes back up relatively quickly). A health method returns a ratio of get\_x\_down to debt plus the value increase in collateral when the price is well above "liquidation".
+
+When a stablecoin charges interest, this should be reflected in the AMM, too. This is done by adjusting all the grid of prices. So, when a stablecoin charges interest rate r, all the grid of prices in the AMM shifts upwards with the same rate r which is done via a base\_price multiplier. So, the multiplier goes up over time as long as the charged rate is positive.
+
+When we calculate get\_x\_down or get\_y\_up, we are first looking for the amounts of stablecoin and collateral x<sup>∗</sup> and y<sup>∗</sup> if current price moves to the current price po. Then we look at how much stablecoin or collateral we get if p<sup>o</sup> adiabatically changes to either the lowest price of the lowest band, or the highest price of the highest band respectively. This way, we can get a measure of how much stablecoin we will which is not dependent on the current instantaneous price, which is important for sandwich attack resistance.
+
+It is important to point out that the LLAMMA uses p<sup>o</sup> defined as ETH/USD price as a price source, and our stablecoin could be traded under the peg (p<sup>s</sup> < 1) or over peg (p<sup>s</sup> > 1). If p<sup>s</sup> < 1, then price in the LLAMMA is p > po.
+
+In adiabatic approximation, p = po/ps, and all the collateral<>stablecoin conversion would happen at a higher oracle price / as if oracle price was lower and equal to:
+
+$$p\_o' = p\_o \sqrt{\frac{p\_o}{p}} = p\_o \sqrt{p\_s}.\tag{14}$$
+
+At this price, the amount of stablecoins obtained at conversion is higher by factor of 1/p<sup>s</sup> (if p<sup>s</sup> < 1).
+
+It is less desirable to have p<sup>s</sup> > 1 for prolonged times, and for that we will use the stabilizer (see next).
+
+# Automatic Stabilizer and Monetary Policy
+
+When p<sup>s</sup> > 1 (for example, because of the increased demand for stablecoin), there is peg-keeping reserve formed by an asymmetric deposit into a stableswap Curve pool between the stablecoin and a redeemable reference coin or LP token. Once p<sup>s</sup> > 1, the PegKeeper contract is allowed to mint uncollateralized stablecoin and (only!) deposit it to the stableswap pool single-sided in such a way that the final price after this is still no less than 1. When p<sup>s</sup> < 1, the PegKeeper is allowed to withdraw (asymmetrically) and burn the stablecoin.
+
+These actions cause price p<sup>s</sup> to quickly depreciate when it's higher than 1 and appreciate if lower than 1 because asymmetric deposits and withdrawals change the price. Even though the mint is uncollateralized, the stablecoin appears to be implicitly collateralized by liquidity in the stablecoin pool. The whole mint/burn cycle appears, at the end, to be profitable while providing stability.
+
+Let's denote the amount of stablecoin minted to the stabilizer (debt) as dst and the function which calculates necessary amount of redeemable USD to buy the stablecoin in a stableswap AMM get\_dx as fdx(). Then, in order to keep reserves not very large, we use the "slow" mechanism of stabilization via varying the borrow r:
+
+$$p\_s = \frac{f\_{dx}(d\_{st})}{d\_{st}},\tag{15}$$
+
+$$r = r\_0 \cdot 2^{-\frac{p-1}{h}},\tag{16}$$
+
+where h is the change in p<sup>s</sup> at which the rate r changes by factor of 2 (higher p<sup>s</sup> leads to lower r). The amount of stabilizer debt dst will equilibrate at different value depending on the rate at p<sup>s</sup> = 1 r0. Therefore, we can (instead of setting manually) be reducing r<sup>0</sup> while dst/supply is larger than some target number (for example, 5%) (thereby incentivizing borrowers to borrow-and-dump the stablecoin, decreasing its price and forcing the system to burn the dst) or increasing if it's lower (thereby incentivizing borrowers to return loans and pushing p<sup>s</sup> up, forcing the system to increase the debt dst and the stabilizer deposits).
+
+## Conclusion
+
+The presented mechanisms can, hopefully, solve the riskiness of liquidations for stablecoin-making and borrowing purposes. In addition, stabilizer and automatic monetary policy mechanisms can help with peg-keeping without the need of keeping overly big PSMs.

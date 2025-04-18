@@ -1,0 +1,23 @@
+Optimistic Rollups Meaning
+
+(Published: Mar 22, 2024 | Updated: Apr 9, 2024)
+
+Optimistic rollups are a layer-2 scaling solution that extends a blockchain’s scalability by executing transactions off-chain. Optimistic rollups assume that all the transactions are valid and accurate unless disputed.
+
+What Are Optimistic Rollups?
+
+As activities on blockchain networks increase, the network suffers from congestion and increased transaction costs. As a result, the network’s efficiency and scalability are affected. Layer-2 protocols can help to relieve blockchains of some computational workload, thus increasing scalability and lowering gas fees.
+
+An optimistic rollup is one of the layer-2 scaling constructions that help augment blockchain scalability. It computes and processes multiple transactions outside the base layer and submits them as a single transaction to the main blockchain.
+
+They are labeled “optimistic” since they assume that all the transactions computed and processed off-chain are accurate and valid. However, the transactions are not immediately recorded on the layer-1 blockchain to allow users to dispute their validity and correctness. This allowed time window is called a challenge period. Put another way, the rollups rely on a fraud-proving mechanism to verify the accuracy and validity of transactions.
+
+If disputed within the challenge period, the rollup protocol nullifies the fraudulent transaction(s), re-executes them, and adjusts its state. The submitter of the faulty transaction is also penalized by slashing their economic stake. Otherwise, the base layer accepts the transactions as valid and records them if the batch remains undisputed when the challenge period expires.
+
+Optimistic rollups vs zk-rollups
+
+Zero-knowledge rollups (zk-rollups) are another type of blockchain rollup that allows layer-1s to reduce transaction costs and increase speed without compromising security and decentralization. While optimistic rollups assume that all transactions processed off-chain are valid until proven otherwise, zk-rollups submit validity proofs to confirm the correctness and validity of the transactions. In summary, zk-rollups rely on a validity-proof scheme and optimistic rollups on fraud proofs.
+
+Another key difference is transaction finality. While an optimistic rollup’s assumption regarding validity potentially increases transaction finality, the challenge period may as well delay it. With zk-rollups, transactions are immediately declared valid, achieving an instant transaction finality once the batch hits the mainnet.
+
+Examples of optimistic rollups include Arbitrum, Base, and Optimism Mainnet.

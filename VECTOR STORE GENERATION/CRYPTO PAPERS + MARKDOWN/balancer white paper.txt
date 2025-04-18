@@ -1,0 +1,334 @@
+# Whitepaper
+
+![](_page_0_Picture_1.jpeg)
+
+**A non-custodial portfolio manager, liquidity provider, and price sensor.**
+
+> by: Fernando Martinelli Nikolai Mushegian
+
+> > v2019-09-19
+
+contact@balancer.nance (mailto:contact@balancer.nance)
+
+# Introduction
+
+A Balancer Pool is an automated market maker with certain key properties that cause it to function as a selfbalancing weighted portfolio and price sensor.
+
+Balancer turns the concept of an index fund on its head: instead of paying fees to portfolio managers to rebalance your portfolio, you collect fees from traders, who rebalance your portfolio by following arbitrage opportunities.
+
+Balancer is based on a particular N-dimensional surface which denes a cost function for the exchange of any pair of tokens held in a Balancer Pool. This approach was rst described by V. Buterin[0] (https://www.reddit.com/r/ethereum/comments/55m04x/lets\_run\_onchain\_decentralized\_exchanges\_the\_way/), generalized by Alan Lu[1] (https://blog.gnosis.pm/building-a-decentralized-exchange-in-ethereumeea4e7452d6e), and proven viable for market making by the popular Uniswap[2] (https://uniswap.io) dapp.
+
+We independently arrived at the same surface denition by starting with the requirement that any trade must maintain a constant proportion of value in each asset of the portfolio. We applied an invariant-based modeling approach described by Zargham et al[3] (https://arxiv.org/pdf/1807.00955.pdf) to construct this solution. We will prove that these constant-value market makers have this property.
+
+# Table of Contents
+
+- Introduction
+- Table of Contents
+- Present Work
+- Theory
+	- Value Function
+	- Spot Price
+	- Effective Price
+	- Spot Price Proof
+	- Constant Value Distribution Proof
+	- Trading Formulas
+		- In-Given-Out
+		- Out-Given-In
+		- In-Given-Price
+	- Liquidity Providing Formulas
+		- All-Asset Deposit/Withdrawal
+		- Single-Asset Deposit
+		- Single-Asset Withdrawal
+- Implementation
+	- License
+	- Releases
+	- Numerical Algorithms
+	- Controlled vs Finalized Pools
+	- Swap and Exit Fees
+- References
+
+# Present Work
+
+Index funds are a common nancial instrument. The rst index fund became effective in 1972. Ever since, investors rely heavily on different portfolio strategies to hedge risk and achieve diversication. Index funds guarantee investors a constant and controlled exposure to a portfolio. If one of its assets out- or underperforms, it is respectively sold or bought to keep its value share of the total portfolio constant.
+
+Both in the conventional nancial system as well as in the blockchain context, index funds and other types of investment portfolios charge investors fees for managing and holding their funds. These fees are necessary to pay for the costs of actively rebalancing the index funds, be it by manual traders or automatic bots.
+
+There are many centralized solutions for portfolio management and for investing in index funds. These all share some form of custodial risk.
+
+We are aware of one decentralized (read: non-custodial) solution that shares all the fundamental characteristics Balancer was designed to have: Uniswap (https://uniswap.io). This approach was rst described by V. Buterin
+
+(https://www.reddit.com/r/ethereum/comments/55m04x/lets\_run\_onchain\_decentralized\_exchanges\_the\_way/) and generalized by Alan Lu (https://blog.gnosis.pm/building-a-decentralized-exchange-in-ethereumeea4e7452d6e).
+
+We independently arrived at the same surface denition by starting with the requirement that any trade must maintain a constant proportion of value in each asset of the portfolio. We applied an invariant-based modeling approach described by Zargham et al (https://arxiv.org/pdf/1807.00955.pdf) to construct this solution. We will prove that these constant-value market makers have this property.
+
+# Theory
+
+Throughout this paper, we use the term "token" to refer to a generic asset because our rst implementation is a contract system that manipulates ERC20 tokens on the Ethereum network. However, there is nothing fundamental about the Ethereum execution context that enables this market-making algorithm, which could be offered by a traditional nancial institution as a centralized (custodial) product.
+
+### Value Function
+
+The bedrock of Balancer's exchange functions is a surface dened by constraining a value function — a function of the pool's weights and balances — to a constant. We will prove that this surface implies a spot price at each point such that, no matter what exchanges are carried out, the share of value of each token in the pool remains constant. V
+
+The value function is dened as: V
+
+$$V = \prod\_t B\_t^{W\_t} \tag{1}$$
+
+Where
+
+- ranges over the tokens in the pool; t
+- is the balance of the token in the pool; B<sup>t</sup>
+- is the normalized weight of the token, such that the sum of all normalized weights is 1. W<sup>t</sup>
+
+By making constant we can dene an invariant-value surface as illustrated in Fig.0. V
+
+### Spot Price
+
+Each pair of tokens in a pool has a spot price dened entirely by the weights and balances of just that pair of tokens. The spot price between any two tokens, , or in short , is the the ratio of the token balances normalized by their weights: SpotPrice o <sup>i</sup> SP o i
+
+$$SP\_i^o = \frac{\frac{B\_i}{W\_i}}{\frac{B\_o}{W\_o}}\tag{2}$$
+
+Where:
+
+- is the balance of token i, the token being sold by the trader which is going into the pool. B<sup>i</sup>
+- is the balance of token o, the token being bought by the trader which is going out of the pool. B<sup>o</sup>
+- is the weight of token i W<sup>i</sup>
+- is the weight of token oW<sup>o</sup>
+
+From this denition it is easy to see that if weights are held constant, the spot prices offered by Balancer Pools only change with changing token balances. If the pool owner does not add or remove tokens to/from the pool, token balances can only change through trades. The constant surface causes the price of tokens being bought by the trader (token ) to increase and price of tokens being sold by the trader (token ) to decrease. One can prove that whenever external market prices are different from those offered by a Balancer Pool, an arbitrageur will make the most prot by trading with that pool until its prices equal those on the external market. When this happens there is no more arbitrage opportunity. These arbitrage opportunities guarantee that, in a rational market, prices offered by any Balancer Pool move in lockstep with the rest of the market. o i
+
+#### Effective Price
+
+It is important to bear in mind that is the spot price, which is the theoretical price for innitesimal trades, which would incur no slippage. In reality, the effective price for any trade depends on the amount being traded, which always causes a price change. If we dene as the amount of token being bought by the trader and as the amount of token being sold by the trader, then we can dene the Effective Price as: SP o i A<sup>o</sup> o A<sup>i</sup> i
+
+$$EP\_i^o = \frac{A\_i}{A\_o} \tag{3}$$
+
+And as mentioned above, tends to when traded amounts tend to 0: EP SP
+
+$$EP\_i^o = \lim\_{A\_o, A\_i \to 0} EP\_i^o \tag{4}$$
+
+#### Spot Price Proof
+
+Let's now prove that this choice of entails Eq.2. V
+
+First of all, we know that what the trader buys, , is subtracted from the contract's balance. Therefore . Likewise, what the trader sells, , is added to the contract's balance. Therefore . Substituting in Eq.2 and Eq.3 we get: A<sup>o</sup> A<sup>o</sup> = −ΔB<sup>o</sup> A<sup>i</sup> A<sup>i</sup> = ΔB<sup>i</sup>
+
+$$SP\_i^o = \lim\_{A\_o, A\_i \to 0} EP\_i^o = \lim\_{\Delta B\_o, \Delta B\_i \to 0} \frac{\Delta B\_i}{-\Delta B\_o} \tag{5}$$
+
+This limit is, by denition, minus the partial derivative of in function of : B<sup>i</sup> B<sup>o</sup>
+
+$$SP\_i^o = -\frac{\partial B\_i}{\partial B\_o} \tag{6}$$
+
+From the value function denition in Eq.1 we can isolate : B<sup>i</sup>
+
+$$B\_i^{W\_i} = \frac{V}{\left(\prod\_{k \neq i,o} B\_k^{W\_k}\right) \cdot B\_o^{W\_o}}$$
+
+$$B\_i = \left(\frac{V}{\left(\prod\_{k \neq i,o} B\_k^{W\_k}\right) \cdot B\_o^{W\_o}}\right)^{\frac{1}{W\_i}}\tag{7}$$
+
+Now we use Eq.7 to expand the partial derivative in Eq.6:
+
+$$\begin{split} SP\_{i}^{o} &= -\frac{\partial B\_{i}}{\partial B\_{o}} = -\frac{\partial}{\partial B\_{o}} \left( \left( \frac{V}{\left( \prod\_{k \neq i,o} (B\_{k})^{W\_{i}} \right) \cdot (B\_{o})^{W\_{o}}} \right)^{\frac{1}{W\_{i}}} \right) = \\ &- \left( \frac{V}{\prod\_{k \neq i,o} (B\_{k})^{W\_{i}}} \right)^{\frac{1}{W\_{i}}} \cdot \frac{\partial}{\partial B\_{o}} \left( B\_{o}^{-\frac{W\_{o}}{W\_{i}}} \right) = \\ &- \left( \frac{V}{\prod\_{k \neq i,o} (B\_{k})^{W\_{k}}} \right)^{\frac{1}{W\_{i}}} \cdot \frac{W\_{o}}{W\_{i}} \cdot B\_{o}^{-\frac{W\_{o}}{W\_{i}} - 1} = \\ &\left( \frac{V}{\prod\_{k} (B\_{k})^{W\_{k}}} \right)^{\frac{1}{W\_{i}}} \cdot B\_{o}^{\frac{W\_{o}}{W\_{i}}} \cdot B\_{i} \cdot \frac{W\_{o}}{W\_{i}} \cdot B\_{o}^{-\frac{W\_{o}}{W\_{i}} - 1} = \\ &\left( \frac{V}{V} \right)^{\frac{1}{W\_{i}}} \cdot B\_{o}^{\frac{W\_{o}}{W\_{i}}} \cdot B\_{o}^{-\frac{W\_{o}}{W\_{i}}} \cdot \frac{B\_{i}}{W\_{i}} \cdot \frac{W\_{o}}{B\_{o}} = \frac{\frac{B\_{i}}{W\_{i}}}{\frac{B\_{o}}{W\_{o}}} \end{split}$$
+
+which concludes our proof.
+
+#### Constant Value Distribution Proof
+
+We will now prove that:
+
+- 1. Balancer Pools maintain a constant share of value across all tokens in the pool and;
+- 2. These shares of value are equal to the weights associated to each token.
+
+Let's calculate , the total pool value in terms of an arbitrary token from the pool. Since we already know that the pool has tokens , let's calculate how many tokens all the other remaining tokens are worth. It does not make sense to use their Effective Price relative to token since we are not going to do any actual trade. Instead, to calculate the theoretical value we use their Spot Price relative to token . V <sup>t</sup> t B<sup>t</sup> t t t t
+
+From Eq.2 we can calculate , i.e how many tokens the balance of each token is worth: V t <sup>n</sup> t n
+
+$$V\_n^t = \frac{B\_n}{SP\_n^t} = B\_n \cdot \frac{\frac{B\_t}{W\_t}}{\frac{B\_n}{W\_n}} = B\_t \cdot \frac{W\_n}{W\_t} \tag{8}$$
+
+We know that the total pool value in terms of tokens is the sum of the values of each token in terms of tokens : t t
+
+$$V^t = \sum\_k V\_k^t = B\_t + \sum\_{k \neq t} V\_k^t = B\_t + \frac{B\_t}{W\_t} \cdot \sum\_{k \neq t} W\_n = \frac{B\_t}{W\_t} \cdot (W\_t + \sum\_{k \neq t} W\_n) = \frac{B\_t}{W\_t} \tag{9}$$
+
+Now to calculate , the share of value each token represents in the pool, all we have to do is divide the value of each token , , by the total pool value, : S<sup>n</sup> n nV t <sup>n</sup> V t
+
+$$S\_n = \frac{V\_n^t}{V^t} = W\_n \tag{10}$$
+
+which proves both that the share each token represents of the total pool value is constant and also that it is equal to the weight of that token.
+
+### Trading Formulas
+
+Calculating the trade outcomes for any given Balancer Pool is easy if we consider that the Value Function must remain invariant, i.e. must have the same value before and after any trade. In reality, will increase as a result of trading fees applied after a trade state transition. For more details on fees, see Implementation: Swap and Exit Fees V V
+
+#### Out-Given-In
+
+When a user sends tokens to get tokens , all other token balances remain the same. Therefore, if we dene and as the amount of tokens and exchanged, we can calculate the amount a users gets when sending . Knowing the value function after the trade should be the same as before the trade, we can write: i o A<sup>i</sup> A<sup>o</sup> i o A<sup>o</sup> A<sup>i</sup>
+
+$$\prod\_{k \neq i, o} (B\_k)^{W\_k} \cdot (B\_o - A\_o)^{W\_o} \cdot (B\_i + A\_i)^{W\_i} = \prod\_k (B\_k)^{W\_k} \tag{11}$$
+
+$$\prod\_{k \neq i,o} (B\_k)^{W\_k} \cdot (B\_o - A\_o)^{W\_o} \cdot (B\_i + A\_i)^{W\_i} = \prod\_{k \neq i,o} (B\_k)^{W\_k} \cdot B\_o^{W\_o} \cdot B\_i^{W\_i} \tag{12}$$
+
+$$(B\_o - A\_o)^{W\_o} \cdot (B\_i + A\_i)^{W\_i} = B\_o^{W\_o} \cdot B\_i^{W\_i} \tag{13}$$
+
+$$B\_o - A\_o = \frac{B\_i^{\frac{W\_i}{W\_o}} \cdot B\_o}{(B\_i + A\_i)^{\frac{W\_i}{W\_o}}} \tag{14}$$
+
+$$A\_o = B\_o \cdot \left( 1 - \left( \frac{B\_i}{B\_i + A\_i} \right)^{\frac{W\_i}{W\_o}} \right) \tag{15}$$
+
+#### In-Given-Out
+
+It is also very useful for traders to know how much they need to send of the input token to get a desired amount of output token . We can calculate the amount as a function of similarly as follows: A<sup>i</sup> A<sup>o</sup> A<sup>i</sup> A<sup>o</sup>
+
+$$\prod\_{k \neq i,o} (B\_k)^{W\_k} \cdot (B\_o - A\_o)^{W\_o} \cdot (B\_i + A\_i)^{W\_i} = \prod\_k (B\_k)^{W\_k} \tag{16}$$
+
+$$\prod\_{k \neq i,o} (B\_k)^{W\_k} \cdot (B\_o - A\_o)^{W\_o} \cdot (B\_i + A\_i)^{W\_i} = \prod\_{k \neq i,o} (B\_k)^{W\_k} \cdot B\_o^{W\_o} \cdot B\_i^{W\_i} \tag{17}$$
+
+$$\left( (B\_o - A\_o)^{W\_o} \cdot (B\_i + A\_i)^{W\_i} = B\_o^{W\_o} \cdot B\_i^{W\_i} \tag{18}$$
+
+$$B\_i + A\_i = \frac{B\_o^{\frac{W\_o}{W\_i}} \cdot B\_i}{(B\_o - A\_o)^{\frac{W\_o}{W\_i}}} \tag{19}$$
+
+$$A\_i = B\_i \cdot \left( \left( \frac{B\_o}{B\_o - A\_o} \right)^{\frac{W\_o}{W\_i}} - 1 \right) \tag{20}$$
+
+Notice that as dened by Eq.11 tends to when , as expected. This can be proved by using L'Hopital's rule, but this proof is out of the scope of this paper. A<sup>o</sup> SP o i ⋅ A<sup>i</sup> A<sup>i</sup> << B<sup>i</sup>
+
+#### In-Given-Price
+
+For practical purposes, traders intending to use our contract for arbitrage will like to know what amount of tokens – – they will have to send to the contract to change the current spot price to another desired one . The desired spot price will usually be the external market price and, so long as the i A<sup>i</sup> SP o i SP ′o i
+
+contract spot price differs from that of the external market, any arbitrageur can prot by trading with the contract and bringing the contract price closer to that of the external market.
+
+The highest prot possible by an arbitrageur is when they bring the contract spot price exactly to that of the external market. As already mentioned, this is the main reason why our design is successful in keeping track of the market prices. This makes it a reliable on-chain price sensor when implemented on a blockchain.
+
+It can be proven that the amount of tokens – – a user needs to trade against tokens so that the pool's spot price changes from to is: i A<sup>i</sup> o SP o <sup>i</sup> SP ′o i
+
+$$A\_i = B\_i \cdot \left( \left( \frac{SP\_i^{lo}}{SP\_i^o} \right)^{\left(\frac{W\_0}{W\_0 + W\_i}\right)} - 1 \right) \tag{21}$$
+
+### Liquidity Providing Formulas Pool Tokens
+
+Pools can aggregate the liquidity provided by several different users. In order for them to be able to freely deposit and withdraw assets from the pool, Balancer Protocol has the concept of pool tokens. Pool tokens represent ownership of the assets contained in the pool. The outstanding supply of pool tokens is directly proportional to the Value Function of the pool. If a deposit of assets increases the pool Value Function by 10%, then the outstanding supply of pool tokens also increases by 10%. This happens because the depositor is issued 10% of new pool tokens in return for the deposit.
+
+There are two ways in which one can deposit assets to the pool in return for pool tokens or redeem pool tokens in return for pool assets:
+
+- Weighted-asset deposit/withdrawal
+- Single-asset deposit/withdrawal
+
+#### All-Asset Deposit/Withdrawal
+
+An "all-asset" deposit has to follow the distribution of existing assets in the pool. If the deposit contains 10% of each of the assets already in the pool, then the Value Function will increase by 10% and the depositor will be minted 10% of the current outstanding pool token supply. So to receive pool tokens given an existing total supply of , one needs to deposit tokens k for each of the tokens in the pool: Pissued Psupply D<sup>k</sup>
+
+$$D\_k = \left(\frac{P\_{supply} + P\_{issued}}{P\_{supply}} - 1\right) \cdot B\_k \tag{22}$$
+
+Where is the token balance of token k before the deposit. B<sup>k</sup>
+
+Similarly, a weighted-asset withdrawal is the reverse operation where a pool token holder redeems their pool tokens in return for a proportional share of each of the assets held by the pool. By redeeming pool tokens given an existing total supply of , one withdraws from the pool an amount of token k for each of the tokens in the pool: Predeemed Psupply A<sup>k</sup>
+
+$$A\_k = \left(1 - \frac{P\_{supply} - P\_{redemed}}{P\_{supply}}\right) \cdot B\_k \tag{23}$$
+
+Where is the token balance of token k before the withdrawal. B<sup>k</sup>
+
+#### Single-Asset Deposit/Withdrawal
+
+When a user wants to provide liquidity to a pool because they nd its distribution of assets interesting, they may likely not have all of the assets in the right proportions required for a weighted-asset deposit.
+
+Balancer allows anyone to get pool tokens from a shared pool by depositing a single asset to it, provided that the pool contains that asset.
+
+Depositing a single asset A to a shared pool is equivalent to depositing all pool assets proportionally and then selling more of asset A to get back all the other tokens deposited. This way a depositor would end up spending only asset A, since the amounts of the other tokens deposited would be returned through the trades.
+
+The amount of pool tokens one gets for depositing a single asset to a shared pool can be derived from the Value Function described above.
+
+#### Single-Asset Deposit
+
+The increase in the pool token supply proportional to the increase in the Value Function. If we dene as the amount of pool tokens issued in return for the deposit, then: Pissued
+
+$$\frac{V'}{V} = \frac{P'\_{supply}}{P\_{supply}} = \frac{P\_{supply} + P\_{issued}}{P\_{supply}}$$
+
+$$P\_{issued} = P\_{supply} \cdot \left(\frac{V'}{V} - 1\right) \tag{24}$$
+
+Where is the Value Function after the deposit and is the Value Function before the deposit. Considering also the balance of asset k after the deposit and its balance before the deposit, we have: V ′ V B ′ <sup>k</sup> B<sup>k</sup>
+
+$$\frac{V'}{V} = \frac{\prod\_k (B\_k')^{W\_k}}{\prod\_k (B\_k)^{W\_k}}$$
+
+Let's say the single-asset deposit was done in asset , then the balances of all other tokens do not change after the deposit. We can then write: t
+
+$$\frac{V'}{V} = \frac{\prod\_k (B\_k')^{W\_k}}{\prod\_k (B\_k)^{W\_k}} = \frac{(B\_t')^{W\_t}}{(B\_t)^{W\_t}} = \left(\frac{B\_t'}{B\_t}\right)^{W\_t}$$
+
+If we dene as the amount deposited in asset , then the new pool balance of asset t is \$\$B't = B\_t + A\_t\$\$. We can then substitute and get the nal formula for the amount of new pool tokens issued \$P{issued} I\_t\$: A<sup>t</sup> t inreturnforasinge − assetdeposit
+
+$$P\_{isused} = P\_{supply} \cdot \left( \left( 1 + \frac{A\_t}{B\_t} \right)^{W\_t} - 1 \right) \tag{25}$$
+
+#### Single-Asset Withdrawal
+
+When a pool token holder wants to redeem their pool tokens in return for a single asset , the amount withdrawn in asset , , is: Predeemed t t A<sup>t</sup>
+
+$$A\_t = B\_t \cdot \left(1 - \left(1 - \frac{P\_{redemed}}{P\_{supply}}\right)^{\frac{1}{W\_t}}\right) \tag{26}$$
+
+Where is the pool balance of asset before the withdrawal. B<sup>t</sup> t
+
+Indeed, using the formulas of deposit and withdrawal dened above, not considering any fees, if one deposits asset for pool tokens and then redeems that same amount of pool tokens for asset , they will get the same initial back. A<sup>t</sup> t Pissued t A<sup>t</sup>
+
+### Trading Fees for Single-Asset Deposit Withdrawal
+
+Depositing or withdrawing to/from a shared pool in a single asset is equivalent to trading of the amount deposited for all the other assets in the pool. of the amount deposited is held by the pool already in the form of asset , so charging a trading fee on that share would be unfair. t (1 − Wt) W<sup>t</sup> t
+
+Indeed, if we disregard any possible pool exit fees, depositing only asset and instantly withdrawing asset will incur in the same trading fees as doing the trade from to using the trade function the pool offers. i o i o
+
+# Implementation
+
+There are a few initial notes regarding the rst release of Balancer. We will release a much more detailed explanation of the system at the same time that the source code is released.
+
+### Free Software on Ethereum
+
+Balancer is implemented as a GPL3-licensed Ethereum smart contract system.
+
+### Releases
+
+The **Bronze Release** is the rst of 3 planned releases of the Balancer Protocol. Bronze emphasizes code clarity for audit and verication, and does not go to great lengths to optimize for gas.
+
+The ❄**Silver Release**❄ will bring many gas optimizations and architecture changes that will reduce transaction overhead and enable more exibility for controlled pools.
+
+The ☀ **Golden Release**☀ will introduce several new features to tie the whole system together.
+
+## Numerical Algorithms
+
+The formulas in the Theory section are sufcient to describe the functional specication, but they are not straightforward to implement for the EVM, in part due to a lack of mature xed-point math libraries.
+
+Our implementation uses a combination of a few algebraic transformations, approximation functions, and numerical hacks to compute these formulas with bounded maximum error and reasonable gas cost.
+
+The rest of this section will be released at the same time as the Bronze release source code.
+
+### Controlled vs Finalized Pools
+
+The Bronze Release allows two basic tiers of trust with respect to pools:
+
+- 1. Controlled pools are congurable by a "controller" address. Only this address can add or remove liquidity to the pool (call join or exit ). This type of pool allows the change of pool assets types and their weights. Note that since the controller is an address, this could in principle implement arbitrary logic, like managing public deposits in a manner similar to a nalized pool. The key difference is that ofcial tooling will not recognize it as a "trustless" pool. Controlled pools with increased trust requirements will be possible with the ❄Silver Release❄.
+- 2. Finalized pools have xed pool asset types, weights, and fees. Crucially, this enables join and exit to be publicly accessible in a safe, trustless manner while keeping a minimal implementation.
+
+### Swaps and Exit Fees
+
+The Bronze Release charges fees in two situations: When traders exchange tokens (via swap and its variants), and when liquidity providers remove their liquidity from the pool (via exit and its variants).
+
+Both of these fees are congurable by the controller, but they are also xed when the pool becomes nalized.
+
+100% of the swap fee goes to the liquidity providers — the amount of the underlying token that can be redeemed by each pool token increases.
+
+Most of the exit fee is returned to the liquidity providers who remain in the pool. This is similar in spirit to a swap fee charged for exchanging pool tokens with underlying tokens.
+
+The rest of the exit fee is transferred to an account controlled by Balancer Labs, Inc, for the development of ❄Future Releases☀ .
+
+### References
+
+[0] Vitalik Buterin: Let's run on-chain decentralized exchanges the way we run prediction markets (https://www.reddit.com/r/ethereum/comments/55m04x/lets\_run\_onchain\_decentralized\_exchanges\_the\_way/)
+
+[1] Alan Wu: Building a Decentralized Exchange in Ethereum (https://blog.gnosis.pm/building-adecentralized-exchange-in-ethereum-eea4e7452d6e)
+
+[2] https://uniswap.io/ (https://uniswap.io)
+
+[3] Zargham, M., Zhang, Z., Preciado, V.: A State-Space Modeling Framework for Engineering Blockchain-Enabled Economic Systems. New England Complex Systems Institute (2018) (https://arxiv.org/pdf/1807.00955.pdf)
+
+![](_page_11_Picture_1.jpeg)
+
+(mailto:contact@balancer.nance) (https://twitter.com/BalancerLabs)
+
+(https://medium.com/balancer-protocol) (https://discord.gg/ARJWaeF) (https://github.com/balancer-
+
+![](_page_11_Picture_4.jpeg)
+
+labs/) (https://depulse.com)
+
+© Balancer Labs

@@ -1,0 +1,12 @@
+streamlit
+langchain-core
+langgraph
+langsmith
+python-dotenv
+langchain-google-genai
+langchain_deepseek
+langchain-community
+chromadb
+transformers[torch]
+accelerate
+sentence-transformers

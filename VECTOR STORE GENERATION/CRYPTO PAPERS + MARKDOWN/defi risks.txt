@@ -1,0 +1,2163 @@
+EEA DeFi Risk Assessment Guidelines - Version 1
+EEA Technical Specification 17 July 2024
+This Version:
+https://entethalliance.org/specs/defi-risks/v1
+Latest Release:
+https://entethalliance.org/specs/defi-risks/
+Latest editor's draft:
+https://entethalliance.github.io/DRAMA/defi-risks.html
+Editor:
+chaals nevile (EEA)
+Contributors to this version:
+Dmytro Budorin - Дмитро Будорін (Hacken), Valerian Callens (Quantstamp), Elizabeth Campbell (Consensys), Juan Costa (Noves), Vinicius Farias Ribeiro (Cube3.AI), Andrew Forman (EY), Bernhard Gotthart (EY), Einaras Gravrock (Cube3.AI), Lisa Gutierrez (C4), James Harsh (EEA), Tremaine Hudson (Cryptio), Bill Hughes (Consensys), Rex Hygate (DeFi Safety), Herman Junge (Consensys), Stylianos Kampakis (Hacken), Paul Kang (Entersoft), Damian Kuthoore (EY), Jessica Levesque (C4), Andrew Lunde (SAP), Kunz Mainali (Bitwave), Boris Nelkin (DTCC), Anaïs Ofranc (QualitaX), Jerome Ostorero (Coinchange), Carlo Parisi (Hacken), Tim Pechersky (OpenZeppelin), Jeff Rundlet (Cryptio), Sissi Ruthe (SAP), Kostiantyn Shost (Hacken), Przemek Siemion (Banco Santander), Monica Singer (Consensys), Linas Stankevičius (Hacken), David Tarditi (CertiK), Jim Thompson (Bitwave), Carlos Vivas (DTCC), Pratik Wagh (Coinchange), Clemens Wan (Consensys), Trevor Ward (Bitwave), Morgan Weaver (OpenZeppelin), Mark Young (Consensys), Sophia Zaller (Relm), Joseph Ziolkowski (Relm)
+Copyright © 2022-2024 Enterprise Ethereum Alliance.
+
+Table of Contents
+1.Introduction
+1.1Executive Summary
+1.1.1Purpose
+1.1.2Intended Audience
+1.1.2.1Ecosystem Stakeholders
+1.2Structure of this document
+2.Key DeFi Metrics
+3.Risks for DeFi assets
+3.1Software risks
+3.1.1Best practices for managing Software Risks
+3.1.2Smart Contract Risk
+3.1.2.1Best practices for managing Smart Contract risks
+3.1.3Blockchain Risk
+3.1.3.1Best practices for managing Blockchain Risks
+3.1.4User Interface risks
+3.1.4.1Best practices for managing User Interface Risks
+3.1.5Oracle Risk
+3.1.5.1Best practices for managing Oracle Risks
+3.1.6Bridge Risk
+3.1.6.1Best practices for managing Bridge Risks
+3.1.7MEV risk
+3.1.7.1Best practices for managing MEV Risks
+3.2Governance risk
+3.2.1Best practices for managing Governance Risks
+3.2.2Custodial Risk
+3.2.2.1Best practices for managing Custody Risks
+3.2.3Tokenomics risk
+3.2.3.1Best practices for managing Tokenomics Risks
+3.3Compliance and Legal Risk
+3.3.1Best practices for managing Compliance Risks
+3.3.2Tax risk
+3.4Standards Conformance Risks
+3.4.1Accounting Conformance Risks
+3.4.1.1Definition of financial instrument
+3.4.1.2Notion of control
+3.4.1.3Best practices for managing Accounting Conformance Risks
+3.4.2Operational Accounting Risks
+3.4.2.1Best practices for managing Operational Accounting Risks
+3.5Credit risk
+3.5.1Best practices for managing Credit Risks
+3.6Counterparty risk
+3.6.1Best practices for managing Counterparty Risk
+3.7Market risk
+3.7.1Best practices for managing Market Risks
+3.7.2Liquidity risk
+3.7.2.1Best practices for managing Liquidity Risks
+4.Key Information for Risk Assessment
+4.1Operational reporting
+4.1.1Financial Reporting
+4.1.2Security Incidents and Preparation
+4.1.3Governance and Token Allocation
+4.1.4Research and Collaboration
+4.1.5User Education and Awareness
+4.1.6Regulatory Compliance
+4.1.6.1Regulatory Compliance Report
+4.2Structural Reports
+4.2.1Governance mechanisms
+4.2.1.1Governance Framework
+4.2.2Counterparty Risk Assessment
+4.2.3Compliance Monitoring Plan
+4.2.4Managing Security Threats
+4.2.5Credit Risk and Liquidity Management
+4.2.6Tokenomics Reports
+4.2.7Market Reporting
+5.Risk Mitigation Strategies
+5.1Communication
+5.2Detecting and Responding to Attack Threats
+5.3Information Security and Hardening
+5.4Testing
+5.4.1DeFi Protocol Reviews
+5.4.2Smart-Contract Reviews
+5.5Implement appropriate standards
+5.6Key Actors and Counterparties
+5.7External factors: Compliance
+5.8User Risk Management
+5.9Reserves and Hedging
+A.Additional Information
+A.1Status of this Document
+A.1.1Expected Development Timeline
+A.1.2Feedback requested
+A.1.3Copyright License Terms
+A.2Background: DeFi basics
+A.2.1Wallets
+A.2.2Decentralized Exchanges (DEXs)
+A.2.3Decentralized Lending Protocols
+A.2.4DeFi ecosystem utilities
+A.2.4.1Stablecoins
+A.2.4.2Wrapped Tokens
+A.2.4.3Yield “farming”
+A.2.4.4Derivatives
+A.3Defined Terms
+A.4Summary of Risks
+A.5Summary of Information Resources and Reports
+A.6Summary of Mitigation Strategies
+A.7Acknowledgments
+B.References
+B.1Informative references
+1. Introduction
+This section is non-normative.
+
+1.1 Executive Summary
+1.1.1 Purpose
+This document draws on the expertise in various areas of DeFi and accounting that its contributors bring, to provide a broad-based and industry-backed guide to the risks involved in working with DeFi, and how to assess, manage, account for and mitigate them.
+
+The need for these Guidelines is shown by the regulatory ambiguity and general lack of accounting standards and guidance for DeFi.
+
+This document is produced and maintained by the EEA Inc.'s DRAMA Working Group.
+
+This is Version 1 of these Guidelines. We welcome feedback to help improve it, and to help the Working Group understand how it has been useful (or not) in specific cases.
+
+1.1.2 Intended Audience
+While primarily written for DeFi Protocol Users and Protocol Investors, this document is also relevant to Protocol Operators and Protocol Developers seeking to minimise the risks in their Protocol. Finally, we hope this work informs and is informed by, regulators and Standards Development Organizations who create standards and regulation that affect DeFi.
+
+1.1.2.1 Ecosystem Stakeholders
+Protocol Users are people or organisations who use a DeFi Protocol as "customers", whether by exchanging tokens, staking, investing, or providing liquidity. The term also covers their agents acting on their behalf, including accountants, legal advisers, and so on.
+
+Protocol Investors are those who take a stake in the governance of a Protocol. They may aim to play a role in managing its operation, or behave as a passive investor hoping that the value of their stake will increase.
+
+Protocol Operators are those who can make decisions regarding the operation of a Protocol. This can include Protocol Investors, Protocol Developers, and anyone else who has the ability to make decisions on how the Protocol operates. An important subset of Protocol Operators are Smart Contract Operators: people who have privileged access to administer Smart Contracts used by the Protocol.
+
+Protocol Developers actively contribute to the code of a Protocol.
+
+1.2 Structure of this document
+The core content of this document is (currently) structured in several sections:
+
+§ 3. Risks for DeFi assets: A description of different kinds of risk that can be present in DeFi. These are linked to relevant best practices for Assessment and Mitigation as appropriate.
+§ 4. Key Information for Risk Assessment: Key Information for Assessment of various risks, organised by type and theme of information.
+§ 5. Risk Mitigation Strategies: Mitigation Strategies for various risks.
+Definitions are in Capitalised Bold Type, generally the first time a term is used in the core content. Other uses of the defined term link to the definition wherever it is in the text.
+
+The appendices include summaries of Risks, Key Information and Mitigation recommendations, terms defined in the document, explanations of some fundamental DeFi concepts, and adminstrative information about the document's status.
+
+Example 1: An example Example
+Examples are sometimes provided, formatted like this. They are intended to be illustrative or explanatory.
+
+2. Key DeFi Metrics
+A few metrics are commonly used to describe aspects of DeFi protocols that are relevant to assessing their value. While some of these are more generally known, some are specific to DeFi or are measured in ways specific to DeFi. Terms are listed alphabetically.
+
+Book Value
+A well-known accounting term that refers to the currently recorded value of an asset.
+Circulating Market Cap
+The price of the token multiplied by the Circulating Supply.
+Circulating Supply
+This measures the number of tokens that are available in the market, excluding tokens that are known to have been burned, held in escrow, or are otherwise clearly unavailable for trading.
+Fair Market Value or (FMV)
+This is a well-known accounting term, meaning the amount that would be realised if an asset were liquidated in the current market.
+Fully Diluted Market Cap
+The price of the token multiplied by the Total Supply
+Gas Usage
+How much gas, or transaction fees, a protocol’s Smart Contract has paid over a fixed period of time, usually 24 hours.
+Impermanent loss
+The opportunity cost of providing liquidity, for example to a DEX, compared to holding the assets in a wallet. Divergence Loss is the measurement of the impermanent loss, where the benchmark is holding the assets in a wallet; Loss vs Rebalancing, (or LVR) measures the shortfall relative to a dynamic rebalancing strategy.
+Loan to Value (or LTV)
+How much collateral is required for a loan of a given size, typically used to trigger liquidation of the loan. This is also known as LTR.
+Maximum Possible Supply
+In some cases there is a mathematical limit to the number of tokens that can be created - this is most well-known as being the case for Bitcoin. The Maximum Possible Supply refers to this limit, where it exists.
+MCAP/Fees
+The result of dividing the Market Cap divided by the Fees paid over a given time period. This can be likened to Revenue Multiples in traditional finance, which similarly compares a company’s valuation to its revenue.
+MCAP/TVL
+The market capitalization of a token, divided by its Total Value Locked
+Protocol Fees
+A measure of a protocol’s revenue in the form of usage fees collected over a fixed time period, usually 24 hours or 7 days.
+Total Supply
+This is the total number of tokens created, less any that are known to have been destroyed.
+Total Value Locked
+This represents the value of all assets held within a DeFi protocol. Note that the assets are not necessarily "locked" in any way.
+Treasury Value
+The value of the tokens held in a protocol team’s treasury, typically measured in terms of a "fiat" currency such as dollars or Euros
+Protocols are sometimes evaluated based on how many distinct addresses have interacted with a protocol, either over a fixed period of time or over the entire lifetime of a protocol. However it is trivial to create new wallet addresses and interact with a protocol, and somet pundits have recommended that users do this for every new transaction, to preserve anonymity. Thus it can be very difficult to accurately assess the number of separate individuals interacting with a DeFi protocol. Unique addresses are not equivalent to unique users, nor even a good proxy measurement. Unless a protocol implements KYC, it is generally not possible to determine unique user numbers.
+
+3. Risks for DeFi assets
+3.1 Software risks
+DeFi is run by software components. Software Risks arise whenever there are issues that affect the software's correct or expected operation, whether because problems or failures in the design and implementation produce unexpected outcomes, or because malicious third parties find and exploit vulnerabilities in the software.
+
+Organisations such as MITRE provide extensive documentation of common security weaknesses [CWE] and known software vulnerabilities [CVE]. There is also documentation for specific types of software, such as the EEA EthTrust Security Levels Specification [EthTrust] covering Smart Contract code, and the EEA Crosschain Security Guidelines [xchain-sec] covering software used in bridges. Quality software development processes will work to avoid such vulnerabilities.
+
+There are often many users of a piece of Software. The Software itself, but also its users, are both potential targets for attack.
+
+Lack of Standardization: The lack of standardization in data formats, protocols, and APIs in DeFi poses interoperability challenges for DeFi software. Integrating and normalizing software or data from diverse suppliers or sources can be complex and error-prone.
+
+Any software distributed over a network has to deal with Latency, the time that can elapse while the system synchronises across the network. In a Defi context, this introduces a risk of acting on outdated information, or of planned actions not being executed in a sufficiently timely manner.
+
+In DeFi, each type of software component can involve some specific risks due to its role in DeFi or to the nature of the software itself:
+
+Smart Contracts
+Smart Contracts are the core “back-end” software that implements the functionality of a DeFi system. Errors in the design, implementation or maintenance of the Smart Contracts can mean the system does not behave as expected or intended.
+Blockchains
+There are a number of Blockchain platforms that Smart Contracts can run on. There are some risks that are relevant to blockchains in general, and sometimes there are specific risks due to the specific properties of a given blockchain
+Front ends
+The “front end” or user interfaces to the DeFi system are typically web applications. User interfaces is a well-known field of risk.
+Oracles and Bridges, common components in DeFi protocols, are susceptible not only to Software Risk but also to other risks.
+
+Oracle Risk
+Many Smart Contracts rely on Oracles: automated sources of information that comes from outside the blockchain where they are deployed. Their sources of information and the way they are used can introduce additional types of risk.
+Bridge Risk
+Bridges enable operation between two or more blockchains. As well as Software Risks they are subject to Market Risk impacting the relationship between two blockchains. They can hold or transfer very significant value, making them attractive targets for hackers to attack.
+3.1.1 Best practices for managing Software Risks
+This section applies to software risks in general. For various specific types of software important in DeFi the following subsections provide more information about specifically targeted best practices.
+Assessing Software Risk:
+
+Results of Stress Tests
+Security incidents and response reports
+Security Updates of Software
+Relevant Mitigation Strategies:
+
+User Feedback channels
+User Education
+Use Secure Channels
+Encrypt Data Storage
+Do not store Private Data in globally accessible locations
+Review security of all components
+All Software Upgrades
+Have Bug Bounty programs
+Establish responsible disclosure procedures
+Have "24/7" Security Response
+Align with Industry standards
+3.1.2 Smart Contract Risk
+Vulnerabilities in Smart Contracts can enable a malicious attacker to destroy or steal some of the value managed by the contract, or enable a situation where this happens as an accidental consequence of an unpredicted sequence of actions.
+
+Different blockchains provide different possibilities for creating and using Smart Contracts. As software that forms a fundamental part of the way DeFi systems function, Smart Contracts face the same Software Risks as any Internet-connected software. Some risks are exacerbated by the specific nature of Smart Contracts.
+
+Example 2
+In 2016 a Smart Contract-based investment fund called The DAO was hacked, resulting in the theft of approximately $50 million worth of Ether. The hack was made possible by a flaw in the DAO's code, which allowed the attacker to drain funds from the fund's account.
+
+On EVM-based chains such as Ethereum, the most common language for writing Smart Contracts is Solidity. However it is possible to use other languages, or even directly generate bytecode for processing.
+
+Example 3
+In July 2023, a reentrancy weakness in certain versions of the compiler for Vyper (the second most common language used to write Smart Contracts for EVMs, at about 15%), enabled attacks on various Liquidity Pools. Approximately USD 50M was stolen by malicious actors, while attempts to take a further 20M were stopped or reversed by white-hat hackers.
+
+Smart Contract code is publicly visible when the contract is deployed on the blockchain. This allows hackers to look for bugs or configuration errors that they can exploit to attack the DeFi system and steal or destroy value.
+
+Smart Contract code deployed hurriedly with inadequate review, or insufficent time spent fixing and the issues discovered in a security review and retesting, can lead to Vulnerable Smart Contracts being exploited.
+
+On most Blockchains transactions can be read by anyone, it is usually very obvious when a Smart Contract used in DeFi is managing a large amount of value. This makes it easy to calculate the potential returns for a successful attack, drawing more attackers to high-value targets.
+
+Smart Contracts are often immutable when deployed, so conventional security techniques based on upgrading vulnerable programs are not always available.
+
+Upgradeable Smart Contracts introduce additional security risks and complications.
+
+The size of the risk is exacerbated by the speed at which funds can generally be moved in DeFi, the difficulty of reversing transactions, the automation of processes, and the pseudo-anonymity of the blockchain.
+
+It is possible for any user to interact directly on the blockchain with a Smart Contract. Inaccurate or insufficient documentation of the Smart Contracts introduces a risk that users interacting directly will do so in a manner that causes mistakes to happen.
+
+3.1.2.1 Best practices for managing Smart Contract risks
+In addition to the best practices applicable to all Software Risks, the following best practices are relevant to assessing and mitigating Smart Contract Risks:
+
+Risk Assessment
+
+EthTrust Certification of Smart Contracts [EthTrust]
+Non-voting Governance Mechanisms
+Relevant Mitigation Strategies:
+
+Perform Smart Contract security review before code is deployed
+Implement Recommendations from Security Review before deployment
+Have Smart Contracts EthTrust Certified [EthTrust]
+3.1.3 Blockchain Risk
+Blockchain Risk is the risk that during DeFi transactions, the base blockchain does not operate properly. This does not include Bridge Risk (moving value between blockchains) which is a separate risk described in § 3.1.6 Bridge Risk.
+
+Overall, blockchains work as designed, and Blockchain Risk in the period 2019-2023 has been very small. Most blockchains are reliable in both execution and uptime, and record keeping has normally been perfect on blockchains. Of all risks within the DeFi ecosystem, Blockchain Risk is generally amongst the smallest.
+
+There are four key ways a blockchain can compromise the functionality of a DeFi protocol deployed on that blockchain.
+
+The blockchain stops working. Blockchains by design are expected to offer "24/7/365" service. This risk is real, but usually small in practice.
+
+Example 4: Blockchain stoppages and slowdowns
+True stoppages have occured on the Solana network, and the Binance Smart Chain that shut down after a hack.
+
+In 2022 the Ethereum Classic blockchain was briefly stopped as a result of a "51% attack".
+
+The Ethereum blockchain when heavily used has never stopped, but it can become slow and expensive to use.
+
+A blockchain loses transaction records.
+
+Fundamental to all DeFi is the expectation that the blockchain retains the records of every transaction. These transactions prove your ownership of an item and that a transaction occurred. Blockchain explorers generally provide the relevant information to end users. Only on the Solana blockchain has this risk been evident, where sometimes new transaction records cannot be found quickly, leading to a risk of high Latency.
+
+The blockchain does not execute a contract's code correctly, resulting in incorrect balances.
+
+This would be catastrophic for trust in DeFi on that blockchain. However here are no records of this risk being realized.
+
+Where a blockchain can be controlled by a malicious actor or set of actors, digital assets could be stolen or destroyed by "brute force", such as a 51% attack.
+
+While such attacks have occurred in practice, for example on the Ethereum Classic blockchain, the community of users on that blockchain managed to revert the effects of the attack.
+
+3.1.3.1 Best practices for managing Blockchain Risks
+In addition to the best practices applicable to all Software Risks, the following best practices are relevant to assessing and mitigating Blockchain Risks:
+
+Risk Assessment
+
+History of Underlying Blockchain
+Governance Mechanisms for the Blockchain
+Relevant Mitigation Strategies:
+
+Evaluate Blockchain security
+3.1.4 User Interface risks
+DeFi projects often offer Web-based systems, for users to interact with them. Some projects offer specific applications as well, or instead. These are all subject to known risks, including java script injection, DNS spoofing and others.
+
+A key risk of all user-facing software is that the interface design or user experience is confusing, leading users to take actions that have consequences they did not expect. This risk can be amplified for users who rely on less common tools to access the interface, including users with disabilities who rely on assistive technology.
+
+Note that in many jurisdictions, interfaces that are not useful for users with disability is also a Compliance Risk, as described in § 3.3 Compliance and Legal Risk.
+
+3.1.4.1 Best practices for managing User Interface Risks
+In addition to the best practices applicable to all Software Risks, the following best practices are relevant to assessing and mitigating User Interface Risks:
+
+Risk Assessment:
+
+Usability and Accessibility assessment
+Relevant Mitigation Strategies:
+
+UX and Accessibility Review
+Pre-test Front Ends in Sandbox
+Test software and API security against OWASP standards
+Implement W3C's Web Content Accessibility Guidelines (for Web-based applications)
+3.1.5 Oracle Risk
+DeFi oracles play a crucial role in decentralized finance ecosystems by providing external data and information to Smart Contracts, which do not otherwise have access to information from outside the blockchain they are deployed on. However, they also introduce unique risks that need to be carefully considered.
+
+The speed at which DeFi oracles provide data is critical for time-sensitive transactions and price feeds. Delays or high latency in fetching and delivering data can impact the accuracy and timeliness of Smart Contract execution. This can create financial losses, or arbitrage opportunities for malicious actors.
+
+Data Accuracy and Manipulation: DeFi oracles rely on data sources from outside the blockchain to provide information to Smart Contracts that can act automatically on the information. Inaccurate data can lead to Smart Contracts producing unexpected or undesired outcomes.
+
+External data sources, such as APIs or websites, that oracles rely on for data, are potentially vulnerable to security breaches, hacking, or data tampering. If an attacker gains control over a data source, they can manipulate the data fed into DeFi protocols. This can lead to unexpected outcomes and potential financial losses, for example maliciously triggering liquidations,
+
+"Single" Point of Failure: DeFi oracles that rely on too few or insecure data sources introduce a risk that manipulation or malfunctioning of that oracle can have significant adverse effects.
+
+Governance and Upgradability: The governance mechanisms of DeFi oracle protocols play a vital role in determining how data sources are selected, managed, and upgraded. Inadequate governance can lead to biased or compromised data feeds, impacting the reliability and integrity of the protocol relying on such oracles.
+
+3.1.5.1 Best practices for managing Oracle Risks
+In addition to the best practices applicable to all Software Risks, the following best practices are relevant to assessing and mitigating Oracle Risks:
+
+Risk Assessment
+
+Oracle Data Delivery and Latency
+Centralization Tendencies of Oracle Networks
+Relevant Mitigation Strategies:
+
+Use Secure Channels
+Multiple Oracles, or Multiple Data Sources
+Use TWAP
+Update or stop using malfunctioning oracles
+3.1.6 Bridge Risk
+Bridges allow the transfer of tokens between different blockchains. Bridges generally come in two forms: Trusted (or Centralized) Bridges, and Trustless (or Decentralized) Bridges. All bridges come with Software Risk. With Trustless Bridges, and there is also potential § 3.2 Governance risk.
+
+Trusted Bridges depend on a central entity or system to operate. The wBTC bridge, for example, allows users to use their Bitcoin to fund operations on the Ethereum blockchain. Because the Bitcoin blockchain doesn’t have smart contract functionality, a third party entity takes custody of the Bitcoin deposits, and mints an equivalent amount of wBTC (a Wrapped Token representing Bitcoin) on Ethereum.
+
+The key risks with a Trusted Bridge are § 3.6 Counterparty risk: users trust that the bridge operators will always process their transactions (see also Censoring and MEV), and that they will not steal or lose funds they control (§ 3.2.2 Custodial Risk).
+
+Trustless Bridges operate using smart contracts, that are monitored through software like Oracles. Users commit funds to a smart contract on one chain, which is detected by an Oracle on the destination chain that mints the equivalent amount there.
+
+Typically the funds committed on the source chain are held there in escrow, as collateral for the tokens on the destination chain. They can be used to provide liquidity for a transfer of tokens back from the destination chain.
+
+A large pool of funds can act as a Honeypot, attracting attacks trying to steal the funds.
+
+Example 5
+In one large attack on a bridge, the Ronin Bridge attack, an estimated $624 Million was stolen from the bridge contract.
+
+An alternative approach to Bridge implementation Burns the funds on the source blockchain, relying on sufficient market interest to provide liquidity for a transfer back to that blockchain. This increases Liquidity Risk for users who rely on being able to move back and forth between blockchains.
+
+3.1.6.1 Best practices for managing Bridge Risks
+In addition to the best practices applicable to all Software Risks, the following best practices are relevant to assessing and mitigating Bridge Risks:
+
+Risk Assessment:
+
+Key Service Providers
+Governance Structures
+Monitoring of Bridges
+Relevant Mitigation Strategies:
+
+Use secure channels
+Follow EEA Crosschain Security Guidelines
+Monitor potential users accumulating stakes
+See also https://ethereum.org/en/bridges/
+
+3.1.7 MEV risk
+The term MEV is common in the blockchain space. When proposed transactions are publicly available e.g. in the Ethereum mempool, there are many ways participants in the network can interact with them. Some of these are positive, such as enabling clearer pricing markets for transactions.
+
+But, understood as Maliciously Extracted Value MEV refers to the potential to manipulate transactions, for example blocking or delaying certain transactions (known as Censoring), and using the information contained in those Censored transactions to gain unintended profits at the expense of the transaction proposer.
+
+Estimates of the value that has been stolen in this way range from hundreds of millions to billions (measured in USD).
+
+Note
+Initially this was done by those who determined which transactions are placed in a block, (the Miners on the Bitcoin or original ("pre-merge") Ethereum Proof of Work blockchain) so the term was originally an acronym of "Miner Extracted Value".
+
+Common forms of attack include:
+
+Front-Running
+Where a transaction processor inserts their own transaction before one that has been submitted, e.g. to take advantage of an offer, to register an important piece of information, or to manipulate the price of an asset that is being traded through the submitted transaction.
+Back-Running
+Where a transaction processor adds a transaction in a block directly after one that it incorporates, for example to capture an arbitrage opportunity.
+Sandwich Attacks
+Where a transaction processor "sandwiches" a transaction between two of their own, for example buying a large amount of a token that the sandwiched transaction is buying, sufficient to increase the price of that token, and sell it immediately after the transaction that was submitted at the higher price.
+The risk created by MEV is that a malicious actor distorts pricing in the protocol to maliciously extract value.
+
+This can reduce trust in the fair functioning of the DeFi protocol in question, introducing § 3.7 Market risk.
+
+3.1.7.1 Best practices for managing MEV Risks
+In addition to the best practices applicable to all Software Risks, the following best practices are relevant to assessing and mitigating MEV Risks:
+
+Risk Assessment
+
+Measures to mitigate MEV risk
+Relevant Mitigation Strategies:
+
+Use Secure Channels
+Use Time-Weighted Average Pricing
+Use Clear Transaction Ordering
+Set Slippage Limits
+3.2 Governance risk
+Governance of a DeFi protocol has two parts.
+
+The Protocol Operators act as a "management team" and implement decisions over the protocol's operations. Their level of control varies widely depending on how the protocol was implemented technically, as well as its governance model. There can be different groups of Protocol Operators with different powers.
+
+For an immutable Protocol, the Protocol Operators usually control the website (used by retail users), and collect transaction fees, but have virtually no control over the Smart Contracts (or user’s funds) because the contracts cannot be changed.
+
+For an upgradeable protocol, the Protocol Operator could also be able to pause the protocol, change the software, withdraw funds, mint new tokens, set new operational parameters such as fees, or initiate emergency steps.
+
+There can also be automated governance, where a vote, typically of those who hold governance tokens, voting in proportion to their holdings, is automatically executed by a Smart Contract.
+
+Governance Risk varies with each protocol design. There are several common attack vectors:
+
+If a small number of actors have significant control over governance votes, there is a risk they will execute a Rug Pull, stealing users' funds including the protocol treasury.
+
+In less severe cases of token concentration, those with a controlling share of governance can introduce protocol changes that disadvantage a particular group of token holders.
+
+For example, governance that requires constant attention can effectively penalise investors by repeatedly shifting the value held in the protocol to those who have time to keep up a certain activity level
+
+Treasury Attacks are where an attacker attempts to control the keys to the treasury.
+
+This type of attack does not usually take user funds in the protocol. The direct impact is usually a drop in the governance token price, however this can singificantly increase the risk of, and can be a precursor to, other governance attacks.
+
+Example 6
+In April 2022, Beanstalk Farms, an Ethereum-based stablecoin protocol, was exploited for $182 million. The attacker took out a flash loan on lending platform Aave, which was used to amass a large amount of Beanstalk’s native governance token, STALK. With the voting power granted by these STALK tokens, the attacker was able to quickly pass a malicious governance proposal that drained all protocol funds into a private Ethereum wallet.
+
+Governance is also subject to Custodial Risks, for example a single critical key being lost, rendering the Protocol inoperable, or multiple keys being stolen in phishing or other external attacks.
+
+If governance is excessively reliant on a single account e.g. because it has a key role as a Protocol Operator, and the key to that account is compromised (e.g. stolen by hacking or other means), an attacker can control the protocol.
+
+An attacker can compromise the computer or smartphone of the owner of the account via phishing, and then steal the key from the owner.
+
+Example 7: Phishing attack against an automated protocol
+The bZx DeFi protocol lost around USD $55 million when a private key controlling Smart Contracts was stolen via a phishing attack
+
+A similar risk can arise where the governance processes require a complex set of approvals, that there are insufficient incentives to participate in governance decisions, effectively paralysing governance because it becomes practically impossible to execute even necessary changes to the protocol.
+
+3.2.1 Best practices for managing Governance Risks
+Risk Assessment
+
+Key Service Providers
+Incentives in Tokenomics Design
+Distribution of Governance Tokens
+Tokenomics Updates
+Governance Structure
+Non-voting Governance Mechanisms
+Measures to protect Treasury
+Frequency of reporting
+Relevant Mitigation Strategies:
+
+Publish policies for locking, burning and issuing tokens
+Incident response available "24/7"
+Develop threat models
+Use automated real-time monitoring
+Use machine-learning and incident reports
+Use secure channels
+Regular stress tests
+Decentralize Governance Token Holdings
+Use Multi-signature for Decision-making
+Balance Voting Quorum against Governance Token Supply
+Conduct due diligence on Smart Contract Operators
+Evaluate whether the individuals implementing and performing the controls have the right skills
+Internal controls for accounting
+Monitor potential users accumulating stakes
+Assess potentially relevant court decisions, laws and regulations
+Implement KYC/AML procedures
+Monitor the development of Protocols
+3.2.2 Custodial Risk
+Managing Private Keys and accessing Wallets can be a complex process. Custodial Risk arises because mistakes or malicious behaviour can result in loss or theft if access to a Private Key is lost, or stolen.
+
+Mismanagement of Private Keys by all users is a risk.
+
+That risk can be compounded by the § 3.6 Counterparty risk of an irresponsible or malicious custodian.
+
+Using blockchain technology, there are 2 general options for how to hold and access your digital assets:
+
+Self-custody, and
+Third Party Custody.
+The decision to select self-custody or third-party custody depends on multiple factors such as cost and efficiency to transact, capacity to protect funds from loss or theft, and potentially regulation such as SEC requirements for advisors to use Qualified Custodians.
+
+Self-custody in the context of digital assets means you control your Private Keys, used to access and transfer your assets on the blockchain.
+
+Example 8: Self-Custody failures
+James Howells, a software engineer, accidentally threw out the wrong hard drive in 2013, losing private keys that controlled Bitcoin accounts allegedly containing several thousand BTC. He spent many years trying to gain permission to excavate the waste disposal facility where he believes the hard drive was taken, including offering £50M to the authority that operated the facility if they could assist him to recover the keys.
+
+Third Party Custody in the context of DeFi refers to the practice of entrusting the custody of a Private Key, and thus the ability to control the assets, to a third party responsible for their security and protection.
+
+Providers of Third Party Custody are often referred to as Custodians, and they can offer a range of services designed to secure users' assets, such as storing private keys in cold storage, providing Multi-signature Wallets, and implementing various security measures to prevent hacks and theft.
+
+The use of third party custody in DeFi allows users to rely on the expertise and experience of professional custodians to safeguard their assets. However, it also involves entrusting control of assets to another entity, which can introduce counterparty risk and limit the decentralization that is a key feature of DeFi.
+
+Few institutional Custodians currently offer “DeFi as a service” at scale.
+
+There have been several high-profile failures of Third Party Custody in the digital asset space.
+
+Example 9
+Mt. Gox was a Bitcoin exchange that at one point handled more than 70% of all Bitcoin transactions. In 2014, the exchange filed for bankruptcy after it was revealed that it had lost 850,000 Bitcoins, worth approximately $450 million at the time, due to a hack that exploited a weakness in the exchange's security system.
+
+Example 10
+QuadrigaCX was a Canadian cryptocurrency exchange that filed for bankruptcy in 2019 after the believed death of its CEO, Gerald Cotten. Cotten was believed to have had control of the exchange's private keys. After he disappeared no one has come forward claiming to have control of the private keys. As a result, approximately USD $190 million worth of customers' funds are believed to be inaccessible.
+
+3.2.2.1 Best practices for managing Custody Risks
+Risk Assessment:
+
+Document Key management procedures
+Implement CCSS procedures for Key management
+Compliance to [CCSS], [ISO27001]
+[SOC2] type 2 reports from Custodians
+Relevant Mitigation Strategies:
+
+Document Key management procedures
+Implement CCSS procedures for Key management
+3.2.3 Tokenomics risk
+Tokenomics refers to the economic incentives provided by a given DeFi protocol, DAO, or other blockchain system, through its distribution of tokens and other incentives. Tokenomics risk can arise from various flaws in the economic design of a Protocol, including token supply distribution, lock-ups, degree of decentralization, incentive structures, and more.
+
+Token Issues that result in supply distortions can reduce the circulating supply, impact liquidity, or dilute the value of tokens, potentially limiting market participation
+
+Some possible examples are where investors receive and try to sell a large percentage of the total supply, or a very high proportion of tokens are locked or staked. Similarly, rewarding users with new tokens can increase the circulating supply, potentially reducing token value through inflation.
+
+Note that for example in the lead-up to and for some time after the Ethereum "Merge" all staked Eth was effectively locked, with no apparent ill effect; the risk needs to be considered based on the specific situation.
+
+Tokens with limited utility beyond speculation can face unstable demand, and a higher chance they are considered a security, with concomitant § 3.3 Compliance and Legal Risk.
+
+Inability to adjust tokenomics to changing market conditions and user needs can result in suboptimal performance.
+
+3.2.3.1 Best practices for managing Tokenomics Risks
+Risk Assessment:
+
+Incentives in Tokenomics Design
+Distribution of Governance Tokens
+Tokenomics Updates
+Governance Structure
+Relevant Mitigation Strategies:
+
+Publish policies for locking, burning and issuing tokens
+Documented the reconciliation process
+Produce accurate and timely financial information
+Develop threat models
+Regular stress tests
+Balance voting quorum against governance token supply
+Internal controls for accounting
+Monitor potential users accumulating stakes
+Monitor the development of Protocols
+3.3 Compliance and Legal Risk
+The risks inherent in DeFi are compounded by a general absence of clear regulatory frameworks. The decentralized nature of DeFi can make it difficult to regulate any single entity, and it also makes it difficult to identify responsible parties or enforce regulatory actions.
+
+The absence of mandatory or standard disclosure requirements in DeFi applications exacerbates these risks. Increased regulatory clarity, tailored to address the structure of DeFi, could eventually address some of these risks.
+
+Regulatory, legal, and Compliance Risks manifest for users and potential users of DeFi in several ways:
+
+Regulators can consider it to be a violation of laws and regulations to interact with DeFi protocols as an activity, or with a given DeFi protocol or its Protocol Operators.
+
+Tokens considered as securities, rather than as utilities, are generally subject to different and stricter regulatory frameworks.
+
+Unclear tax implications for DeFi introduce a risk that tax treatment can be considered in violation of laws and recommendations.
+
+A Protocol might be considered in violation of AML regulation.
+
+Protocol governance can enable blocking participants who have been proscribed. However, if anonymous wallets are able to engage with DeFi protocols and are only blocked "on demand", the lack of KYC ("Know Your Customer") and AML (Anti-Money Laundering procedures) can expose DeFi participants to the risk of interacting with money coming from illicit activities, or engaging in trade with entities that are subject to local sanctions regimes such as OFAC [ofac].
+
+3.3.1 Best practices for managing Compliance Risks
+Risk Assessment:
+
+Regulatory compliance Mechanisms and Measures taken
+Relevant changes in regulation
+Participation in standards-setting bodies
+Operations Relevant to Taxes
+Relevant Mitigation Strategies:
+
+Monitor Legal and Regulatory Landscape, especially tax requirements
+Participate in Industry Groups
+Implement KYC including for Protocol Operators
+3.3.2 Tax risk
+In 2024 there is a lack of guidance on the taxation of digital assets, and even less guidance for transactions using DeFi protocols. This requires users to analyze each leg of the transaction to determine which to consider a recognition (taxable) event for tax purposes and to potentially self-report off-chain transactions.
+
+Example 11: tax issues: Decentralized Lending
+An entity that participates in a transaction with a DeFi staking pool, Liquidity Pool, or AMM will need to consider whether
+
+there has been a change in dominion and control over the asset(s) provided such that a sale or exchange was deemed to occur, and
+the assets provided are exchanged for new assets that are materially different.
+Thus, Decentralised lending might not be considered loans for tax purposes.
+
+With Defi's varied architecture and the common lack of legal agreements between parties, users can be relegated to having to analyze the rules set forth in the software code, and the outcomes of criminal litigation, in determining tax treatment.
+
+There can also be uncertainty around the character and sourcing of the yield, as well as the timing at which the yield is recognized into revenue.
+
+The timing and classification of revenue recognition for tax purposes can also dictate the amount of revenue to recognize, given the volatile nature of the valuations of digital assets.
+
+3.4 Standards Conformance Risks
+There are multiple standards that cover DeFi protocols, from those already mentioned in relation to § 3.1 Software risks to wide-ranging accounting standards such as GAAP or IFRS.
+
+In some cases, applying these standards correctly is a legal requirement that can impact § 3.3 Compliance and Legal Risk, but more often the potential impacts are related to reputation, the cost of raising capital, or other such areas where the risks are real but do not carry the potential for formal legal sanctions.
+
+3.4.1 Accounting Conformance Risks
+The unique elements of DeFi make it challenging to apply accounting standards such as Generally Accepted Accounting Principles, or GAAP, the standard used in the USA and maintained by the Financial Accounting Standards Board (or FASB), or the International Financial Reporting Standards or IFRS, maintained by the International Accounting Standards Board (or IASB) which is the legal standard in most countries (including the European Union and Russia) other than the USA. China also has its own accounting standard.
+
+As of September 2023, IASB has not addressed accounting for DeFi, while FASB has only made some proposals. This introduces the legal or Compliance Risk that accounting practices will later be considered not to have followed acceptable standards.
+
+At the heart of the accounting is whether a transaction with a DeFi protocol is characterized as a transaction with a principal (i.e., peer-to-contract or peer-to-protocol) or a transaction through an agent (i.e., peer-to-peer facilitated by the protocol).
+
+Example 12
+For example, when an institutional user contributed a token pair to a DEX and receives an LP token in return, is the appropriate accounting:
+
+Derecognize the contributed tokens upon contribution to the pool and recognize the LP token? or
+Do not derecognize the contributed tokens upon contribution to the pool, but account for the liquidity provider’s proportionate share of each trade that occurs in the DEX?
+The following two particular elements are worth noting:
+
+3.4.1.1 Definition of financial instrument
+Accounting derecognition models might distinguish between assets that are financial assets and all other assets. For example, under GAAP rules applicable in the United States, the derecognition of financial instruments requires that the assets be legally isolated from the transferor.
+
+Some digital assets could meet this definition (for example, certain stablecoins issued by a central party with off-chain assets supporting redemption) while others do not.
+
+3.4.1.2 Notion of control
+Accounting models for derecognizing transferred assets either pivot on whether control of the asset has been transferred, or include the transfer of control as part of a broader analysis of whether risks and rewards have transferred. Given that many DeFi protocols are “noncustodial”, in that users are able to call their proportionate share of assets in the DeFi protocol pools, it is unclear whether such protocols can obtain “control” as defined in the relevant accounting standards.
+
+Investment companies also need to determine what the unit of account is, and what its cost basis is, as they present realized gains/losses separately from unrealized gains/losses.
+
+3.4.1.3 Best practices for managing Accounting Conformance Risks
+Risk Assessment:
+
+Relevant Financial Figures
+[SOC1] type 2 reports
+Key Service Providers
+Relevant changes in regulation
+Participation in standards-setting bodies
+Relevant Mitigation Strategies:
+
+Explain asset classes
+
+Explain choice of accounting treatments
+
+Participate in standards-setting and regulatory advisory bodies
+
+3.4.2 Operational Accounting Risks
+Operational Accounting Risks are the risks arising from inaccuracies in accounting procedures:
+
+Mismatches between on-chain positions and reported financial positions can arise due to failing to account for open positions such as liquidity pool tokens that are staked in a protocol.
+
+Deliberate fraud, or incompetence, on the part of accounting staff or contractors can lead to direct losses, failure to recognise growing problems, and legal penalties.
+
+Weak internal standards for accounting can give rise to inconsistencies.
+
+Fixed valuation for assets that can in fact vary in price, whether Stablecoins or more volatile asset classes, can introduce arbitrage opportunities that can drain the value of a Protocol. This risk is more acute for assets other than Stablecoins, and can be compounded.
+
+Stablecoins are intended to hold a value equivalent to some external measure, such as a Euro. However their market value often varies very slightly from the Peg, and they can become "untethered" in various ways, leading to a significant difference between their Fair Market Value and their Book Value.
+
+3.4.2.1 Best practices for managing Operational Accounting Risks
+Risk Assessment:
+
+Relevant Financial Figures
+[SOC1] type 2 reports
+Key Service Providers
+Relevant Mitigation Strategies:
+
+Don't assume fixed token valuations
+Track reporting data against onchain positions
+Document reconciliation processes
+Provide timely reporting
+Evaluate personnel
+Establish internal control mechanisms
+3.5 Credit risk
+Credit Risk typically represents a probability of loss to a lender due to Bad Debt, when a loan is liquidated and the collateral is insufficient to repay the outstanding debt to the lender, or insufficient payment so the lender's cashflow and liquidity creates a situation the lender cannot sustain.
+
+Many risks already described in this discussion paper contribute to Credit Risk: Software risk, tokenomics risk and governance design, and the risk of collapse of the liquidation market.
+
+Banks implement credit risk management analyzing the credit risk of each of their customers (5 Cs), and are heavily regulated around credit risk, provide assurance for lenders, and in turn in many cases are insured against defaulting. However, in traditional finance (TradFi) lenders still face certain risks of fraudulent activities within the bank and externally, as well as potential inadequacy of capital reserves during events such as a run on the bank.
+
+In Decentralized Lending it is possible for lenders to interact with anonymous borrowers. Because lenders as Liquidity Providers invest in a pool, creditworthiness of individual borrowers is often considered relatively unimportant.
+
+In a fast moving market, like a market crash, insufficient demand from liquidators can mean liquidation fails to repay the lender in full, in other words creates Bad Debt. This risk is exacerbated by rehypothecation of collateral or high leverage.
+
+3.5.1 Best practices for managing Credit Risks
+Risk Assessment:
+
+Liquidity management
+measures to manage credit risk
+Insurance cover
+Relevant Mitigation Strategies:
+
+Document the reconciliation process
+Produce accurate and timely financial information
+Develop threat models
+Regular stress tests
+Internal controls for accounting
+Monitor potential users accumulating stakes
+Appropriate risk limits
+Monitor the development of Protocols
+3.6 Counterparty risk
+Counterparty risk is the danger that another party to a transaction will cause you to lose money.
+
+The most common Counterparty Risk in traditional finance, as described in the previous section § 3.5 Credit risk, is that a borrower is not capable of paying their loan, whether it is an individual failing to make repayments, or a bank or similar organisation that fails to return deposits.
+
+Some might argue that a DeFi protocol is itself a counterparty, because a user transacts with the Protocol. Protocol Operators and as relevant Custodians are effectively counterparties. In this document risks they introduce are treated respectively as § 3.2 Governance risk and § 3.2.2 Custodial Risk.
+
+If Investors and Users are counterparties, there are § 3.3 Compliance and Legal Risk related to requirements for KYC or AML procedures to be in place so as not to deal with sanctioned individuals or organisations.
+
+3.6.1 Best practices for managing Counterparty Risk
+Risk Assessment:
+
+Key Service Providers
+KYC / AML procedures implemented by the Protocol.
+Relevant Mitigation Strategies:
+
+Document the reconciliation process
+Produce accurate and timely financial information
+Develop threat models
+Regular stress tests
+Balance voting quorum against governance token supply
+Conduct due diligence on Smart Contract Operators
+Internal controls for accounting
+Monitor potential users accumulating stakes
+Implement KYC/AML procedures
+Monitor the development of Protocols
+3.7 Market risk
+Market Risk is the risk of losses due to unexpected changes in the value of underlying assets, such as cryptocurrencies or tokens. This is typically due to a loss of confidence in the DeFi Protocol.
+
+In DeFi, this can be a result of general market forces like economic and monetary influences and market sentiment, but also as a directly consequence of the digital nature and design of DeFi protocols.
+
+Prices of crypto assets can be highly volatile. This creates the risk of Impermanent Loss. This risk is usually exacerbated by perceptions of Liquidity Risk in a market.
+
+Because DeFi is still a largely unregulated space, the absence of legal certainty can increase market risk based on expectations of regulatory changes that affect participating in DeFi projects.
+
+Hacks, exploits of vulnerabilities discovered, or actions by Protocol Operators that is considered unethical or damaging, can rapidly and deeply undermine market confidence in a Protocol or Digital Asset. In the most serious case, these can also literally drain the value from a Protocol.
+
+Manipulative practices, such as wash trading, spoofing, or pump and dump schemes are a risk to Defi Protocols. Generally there is less protection against such manipulation than in TradFi, and the pseudonymous nature of DeFi means it can be more difficult to identify if a market is being manipulated.
+
+If the design of automated market makers (AMMs) on DEXs is unable to manage the volatility that they are exposed to appropriately, this can exacerbate Market Risk.
+
+Many DeFi systems, particularly Decentralized Lending Platforms, rely on sharing risk among many participants as a strategy to minimize it.
+
+In a situtation where the risk is spread too narrowly, or where the effects of a market change cannot be sustained by too many investors, this strategy becomes a systemic risk.
+
+3.7.1 Best practices for managing Market Risks
+Risk assessment:
+
+Participation in standards-setting bodies
+Investors with significant holdings
+Known related parties
+Market depth and price discovery
+Roadmap
+Utility of the token
+Detect and prevent market manipulation
+Competition
+Relevant Mitigation Strategies:
+
+document the reconciliation process
+Produce accurate and timely financial information
+Develop threat models
+Regular stress tests
+Balance voting quorum against governance token supply
+Monitor potential users accumulating stakes
+Monitor the development of Protocols
+Appropriate risk limits
+3.7.2 Liquidity risk
+Liquidity Risk arises when a lack of available liquidity means users are unable to convert tokens at their Fair Market Value.
+
+As noted in § 3.5 Credit risk, without a centralized exchange or counterparty, DeFi services often rely on incentivizing market-makers to liquidate undercollateralized loans.
+
+Fixed liquidity adjustment mechanisms are often hard-coded into the structure of the DeFi Protocol. This limits the ability of DeFi applications to respond to unanticipated market conditions or user behavior.
+
+This can in turn leave liquidity providers and lenders with unanticipated default risk stemming from an inability to meet their own liquidity obligations.
+
+The decentralized nature of these applications also increases the risk of an asset-liability mismatch, which would typically be managed in TradFi through intermediaries.
+
+While Overcollateralization in lending DeFi applications helps mitigate Liquidity Risk, it might not function as an effective failstop in certain situations like sudden prices shocks and fast moving markets. With insufficient timely demand from liquidators in the market, the liquidation mechanism can fail.
+
+DeFi can be susceptible to excessive leverage of cryptocurrencies or stablecoins used as collateral on DeFi trading platforms.
+
+Because assets used as collateral in Defi are generally unregulated and pseudonymously owned, they can be rehypothecated or otherwise increase leverage to levels that are unsustainable in situations such as liquidation or major price change, inceasing the systemic risk of a liquidity crisis during adverse events.
+
+In DeFi markets liquidity is generally fragmented, posing heightened Liquidity Risk in individual liquidity and lending pools.
+
+This can mean that in any given market there are not necessarily enough buyers and sellers at any given time to provide an effective price discovery mechanism. As a result, investors can find it difficult to enter and exit positions in a timely and efficient manner.
+
+3.7.2.1 Best practices for managing Liquidity Risks
+Risk Assessment:
+
+Key Metrics
+Rehypothecation Policies
+Liquidity Pool composition
+Liquidity management
+Historical Volatility
+Relevant Mitigation Strategies:
+
+Publish policies for locking, burning and issuing tokens
+Adequate Capital Reserves
+Document the reconciliation process
+Produce accurate and timely financial information
+Incident response available "24/7"
+Develop threat models
+Use automated real-time monitoring
+Use machine-learning and incident reports
+Regular stress tests
+Internal controls for accounting
+Monitor potential users accumulating stakes
+Monitor the development of Protocols
+Demonstrate Adequate Capital Reserves
+Hold a range of tokens
+4. Key Information for Risk Assessment
+To assess and manage risks in DeFi, just as in TradFi, it is necessary to consider important information. This relies on the availability of certain kinds of information. This information can be provided by DeFi protocols, or in many cases by third parties. Indeed, one of the benefits of the relative openness of DeFi protocols is that often third parties specializing in analysis and reporting provide the most useful information.
+
+Given the automated nature of DeFi, much important information can and SHOULD be provided in near real-time, and the timeliness of information provision is itself useful to assess the level of risk associated with a particular Protocol.
+
+Some of the information necessary to assess risk is historical, so it will not be available until the Protocol is operational. Other information is related to the design of the Protocol, and SHOULD be available before the Protocol is operational.
+
+Absence of any key reports can imply that the information is not known. While this makes the risk harder to assess, it can also be an indication that it is higher.
+
+Automated reporting can be built in to Protocol design. However, it is important to consider Protocol Reviews and Reports produced by third parties. In fully automated decentralized cases, it is possible there is no Protocol Operator generating the reports, as there would be in a traditional public company.
+
+Protocol Reports SHOULD be publicly available.
+
+This allows stakeholders to review the security measures in place, and ensure that known vulnerabilities have been tested. It helps increase confidence in Protocol Operators, which in turn helps mitigate Market Risk.
+
+This paper divides important reports into:
+
+Operational Information
+Key indicators of performance, and descriptions of important considerations regarding the Protocol that can influence its future performance or capabilities to adapt to changes in the market environment, and
+Structural Information
+In DeFi, the structure of a Protocol, including its governance mechanisms and the underlying Tokenomics can have a significant impact on the potential for risk. It is possible that reports in this category do not change over the entire lifetime of a Protocol.
+4.1 Operational reporting
+Historical reporting is important. Although it is not a reliable guide to future performance, it provides a sense of how a protocol has performed under somewhat known conditions.
+
+As described in more detail in this section, Best Practices for historical reporting include documenting:
+
+Financial information,
+Hacks and attacks whether successful or not, and resulting losses,
+Liquidations,
+Audits, Security reviews,
+System updates and software changes,
+Blockchain performance, or
+Governance decisions and actions.
+4.1.1 Financial Reporting
+Protocol Reports SHOULD cover up-to-date (i.e. as far as possible live) relevant financial figures (similar to those for a comparable TradFi business) covering at least:
+
+Sources of income (e.g. token issuance, lending, other activities)
+Frequency and value of rewards received and distributed e.g. to liquidity providers
+Expenditures
+Treasury Assets
+Liquidity Pool information
+Income can be received from many sources. It is important to describe sources of yield (e.g. Issuance, Lending, Providing liquidity), yield rates, the frequency or dates of rewards with their overall value, and irregular income such as insurance payments received.
+
+Expenditures include direct payments related to the operation of a Protocol, such as
+
+Transaction fees paid on the blockchain,
+Liquidations,
+Rewards paid to participants including investors and liquidity providers,
+Taxes paid,
+Expenditures related to operation, or
+Payment for services provided by third parties including costs of audits and assessments.
+Important general information includes the value of assets held in treasury, and liquidity constraints, both externally imposed and internally defined as part of overall governance.
+
+Protocol Reports SHOULD outline current § 2. Key DeFi Metrics.
+
+Important information includes Total Value Locked, the number of transactions and number of holders, yields and liquidation rates.
+
+Protocol Reports SHOULD provide historical price volatility data for underlying assets.
+
+Cryptocurrencies and tokens can be highly volatile. Providing historical volatility data, market analysis, and risk warnings helps inform Protocol Users about potential risks to the Protocol.
+
+Protocol Reports SHOULD cover liquidity pools' composition, including depth and diversity of liquidity providers.
+
+Metrics related to pool utilization, reserves, and historical liquidity patterns give users insight into the overall liquidity health of the protocol.
+
+4.1.2 Security Incidents and Preparation
+Protocol Reports SHOULD detail the results of stress tests and analyses related to liquidity shocks and adverse market conditions, including any identified vulnerabilities and proposed mitigations.
+
+Protocol Reports SHOULD include any security breaches or exploits that lead to fund losses, as well as any attacks that were detected and nullified.
+
+A detailed incident report, including the impact, how existing mitigation measures worked, and plans for preventing similar incidents in the future is important to understand
+
+Protocol Reports SHOULD provide Technical Security updates for all software used by the Protocol, including all of:
+
+Technical standards met by the content reviewed or the review process
+Issues found
+How the identified vulnerabilities have been fixed, and
+Results of assessment carried out on the fixed software.
+It is important that security assessment covers all software used, including the blockchain(s) on which the Protocol operates, bridges and oracles, and third-party tools commonly used to interact with the Protocol.
+
+Equally, security reviews and reporting need to cover the code that is actually deployed, so they need to be done for any software upgrades deployed.
+
+Further security requirements for specific types of software are detailed in the following subsections.
+
+For Smart Contracts, as well as EthTrust Certification this can include activities such as fuzzing or white-hat penetration testing.
+
+As well as test results themselves, measures taken as a result of testing are a very important outcome.
+
+Protocol Reports SHOULD cover accessibility and usability asessment of frontend software or interfaces regularly, and specifically for any upgrades or new software deployed.
+
+Protocol Reports SHOULD cover centralization tendencies of oracle networks the Protocol relies on.
+
+Highlight governance mechanisms, consensus models, and any potential risks associated with centralization
+
+Protocol Reports SHOULD detail monitoring of bridge infrastructure and Smart Contracts used for token transfers between blockchains.
+
+Protocol Reports SHOULD describe the history of the underlying blockchain for any DeFi protocol.
+
+Key points to include are whether there are reliable archives and block explorers that are maintained for the blockchain, and whether it has been subject to notable outages for example to respond to hacks or other failures.
+
+4.1.3 Governance and Token Allocation
+Protocols SHOULD describe the distribution and concentration of governance tokens.
+
+This is important to assess concerns such as the possibility of a Rug Pull or other governance attacks.
+
+Protocol Reports SHOULD describe what is known of investors with a significant holding of tokens
+
+What returns have private investors and team members realized?
+
+Protocol Reports SHOULD detail known related parties who transact between themselves, whose collective holding could qualify them as a key stakeholder.
+
+This is loosely related to AML practices.
+
+Protocol Reports SHOULD describe any updates or adjustments made to the tokenomics design.
+
+Adjustments to tokenomics, including Protocol Operators changing parameters that are designed to be managed, are important information to assess ongoing preformance of a Protocol and of its governance.
+
+4.1.4 Research and Collaboration
+Protocol Reports SHOULD describe ongoing research efforts and collaborations with industry partners, for example in standards development organisations, focused on combating risks.
+
+4.1.5 User Education and Awareness
+Protocols reports SHOULD describe user education and awareness-raising efforts.
+
+4.1.6 Regulatory Compliance
+Investors need to ensure they understand and comply with laws that apply to them, including tax regulations. In some cases, this will only be possible if DeFi protocols provide necessary information to make the correct judgements.
+
+Protocol Reports SHOULD detail measures taken to ensure compliance with relevant regulatory standards and guidelines, including at least:
+
+Anti-money laundering (AML), know your customer (KYC) and Key Stakeholder / Insider transparency requirements,
+Legal requirements specific to operating jurisdictions
+Accounting compliance to local requirements (e.g. GAAP, IFRS, etc.)
+Measures to ensure compliance, plans for adapting to evolving regulatory requirements, and measures in place to mitigate legal risk and ensure appropriate user protection enable investors to ensure that the protocol operates within an appropriate legal framework and addresses potential risks related to illicit activities.
+
+It is important that reports provide information sufficiently detailed that it is useful for Users and Investors, who rely on it as part of the information they need to comply with regulation regarding their own financial affairs.
+
+An important part of a high-quality framework, and of reporting on it, is active ongoing monitoring of its effectiveness.
+
+4.1.6.1 Regulatory Compliance Report
+Protocol Reports SHOULD provide a detailed overview of changes to the legal and regulatory landscape governing the specific jurisdictions in which the protocol operates.
+
+Analysis of relevant laws, regulations, and guidance that can impact the protocol and its users, identifying potential legal challenges and vulnerabilities, such as the risk of violating securities laws, anti-money laundering (AML) regulations, or consumer protection laws, are all important information that helps assess whether Protocol Operators are managing Compliance Risk effectively.
+
+Protocol Reports SHOULD provide a detailed overview of the protocol's operations relevant to taxes that Protocol Investors or Protocol Users might be liable to pay.
+
+Addressing the tax implications of using the protocol and engaging in various DeFi activities, and providing clear and accurate guidance to users on the flows of control of digital assets, and on the ways their value changes will help investors assess the potential tax obligations they could face, including the classification of transactions, recognition of taxable events, and reporting requirements.
+
+4.2 Structural Reports
+Many reports on the structure of DeFi Protocols parallel the information provided for § 4.1 Operational reporting with information describing policies in place, including automated procedures. In many cases this information can be made available before the launch of the Protocol. Execpt for upgradeable elements of the Protocol including governance decisions taken by Protocol Operators, this information is not likely to change.
+
+Protocol Reports SHOULD describe insurance cover for business interruption and/or loss of assets.
+
+It is important to describe any insurance cover that is available to Protocol Operators, Protocol Users, or Protocol Investors as well as cover for the Protocol itself.
+
+Protocol Reports SHOULD outline the frequency of reporting, and how up-to-date reports are.
+
+This information is important for all reporting available for a Protocol. Given the theoretical and often practical ability for Protocols to operate at very high speed, and the risks introduced by Latency, it is important to understand any delays to information that is available.
+
+Protocol Reports SHOULD describe market depth and price discovery mechanisms for the Protocol.
+
+4.2.1 Governance mechanisms
+4.2.1.1 Governance Framework
+Protocol Reports SHOULD describe the governance structure in detail, including
+
+decision-making processes,
+mechanisms for community involvement,
+emergency procedures,
+how Protocol changes are decided and implemented,
+the role of governance tokens,
+third parties the Protocol relies on, and
+Non-voting Governance Mechanisms such as the privileges held by Protocol Operators.
+Protocol Reports SHOULD outline a roadmap.
+
+Protocol Reports SHOULD describe the protocol's ability to adapt the tokenomics design.
+
+Changing market conditions and user needs are common. Optimal performance can be dependent on contonuous realignment with evolving industry trends.
+
+Good roadmaps include milestones, that as far as possible are tangible and trackable.
+
+It is important to describe how the protocol creates sustainable value beyond “ouroboros” practices like buybacks, burns and taxes, or very limited supply of total emission at TGE.
+
+Protocol Reports SHOULD describe policies for the issue of new tokens.
+
+Clarity around ongoing supply and the way it is governed helps investors and users maintain approriate expectations around issues such as inflation, as well as concentration or decentralization of ownership and governance.
+
+This is also related to Distribution of Governance Tokens
+
+Protocol Reports SHOULD describe governance mechanisms not based on voting
+
+This covers any cases where specific accounts or Protocol Operators have autonomous control over operations, and is especially important for critical operations such as the ability to pause a protocol, censor transactions, or update software.
+
+4.2.2 Counterparty Risk Assessment
+Conduct a thorough assessment of counterparty risks related to pseudonymous transactions. Disclose the protocol's ongoing monitoring efforts, collaborations with regulatory authorities, and implementation of risk management tools to address these risks.
+
+Protocol Reports SHOULD detail all third parties who perform important services.
+
+As well as Protocol Operators and contracted services such as accounting, monitoring of the Protocol or regulatory environments, this includes important dependencies such as operators of Oracles or Bridges, and developers of third-party software that is commonly used by Protocol Operators, or Protocol Users and Protocol Investors.
+
+4.2.3 Compliance Monitoring Plan
+Protocol Reports SHOULD detail mechanisms to ensure compliance with relevant regulatory standards and guidelines, including
+
+anti-money laundering (AML), know your customer (KYC) and Key Stakeholder / Insider requirements,
+legal requirements specific to operating jurisdictions
+accounting compliance to local requirements (e.g. GAAP, IFRS, etc.)
+tax treatment strategies
+Measures to ensure compliance, plans for adapting to evolving regulatory requirements, measures in place to mitigate legal risk and ensure appropriate user protection, and internal controls including audits and third-party assessments to validate compliance efforts, all enable investors to check that the protocol operates within an appropriate legal framework and addresses potential risks related to illicit activities.
+
+It is important that reports provide information sufficiently detailed that it is useful for Protocol Users and Protocol Investors, to help them comply with regulation regarding their own financial affairs.
+
+Partnerships and collaborations with industry groups or legal experts focused on compliance in the DeFi space can help increase trust that a Protocol is effectively managing Compliance Risks.
+
+4.2.4 Managing Security Threats
+Protocol Reports SHOULD describe the measures implemented by the protocol to mitigate MEV risks, including at least:
+
+the use of advanced transaction sequencing techniques,
+anti-front-running mechanisms, and
+other solutions aimed at reducing the opportunities for malicious extraction of value.
+Protocol Reports SHOULD describe incident response and recovery plans for blockchain-related disruptions or failures.
+
+This includes measures taken to ensure the timely detection, containment, and resolution of incidents, as well as procedures for restoring normal operations.
+
+Protocol Reports SHOULD outline the measures in place to protect the protocol's treasury from external attacks.
+
+This includes technical safeguards against attempts to gain control of the treasury's private keys, such as the use of multi-signature, practices such as implementation of [CCSS] or similar standards, information security training for individuals, and monitoring for any attempts to concentrate ownership of governance tokens.
+
+Protocol Reports SHOULD describe security measures and best practices implemented such as encryption, secure key management, multi-factor authentication, and adherence to industry security standards.
+
+Demonstrating that high-quality software development practices have been followed, and that industry best practices for Security are implemented throughout the protocol, with effective review and maintenance,Protocol Providers SHOULD report on the security measures taken to ensure the reliability and integrity of data sources used by oracles. This includes security reviews and testing, monitoring, and protection against potential security breaches or tampering.
+
+Protocol Reports SHOULD cover the timeliness and latency of oracle data delivery, and measures in place to ensure accurate and real-time data feeds for time-sensitive transactions.
+
+4.2.5 Credit Risk and Liquidity Management
+A comprehensive report outlining the protocol's credit risk management practices is important. Key information includes measures taken to improve market liquidity, such as partnerships with external liquidity providers or integration with decentralized exchanges (DEXs).
+
+Protocol Reports SHOULD describe measures to manage Credit Risk.
+
+Key information includes LTV requirements and policies around collateralization, triggering conditions for liquidation, and other mechanisms designed to ensure repayment of loans.
+
+Protocol Reports SHOULD detail liquidity management.
+
+How the protocol manages Liquidity Risk and adapts to unanticipated market conditions and user behavior is important information to understand how it might behave.
+
+It is important to describe the mechanisms in place to incentivize market-makers, ensure sufficient liquidity in lending pools, and address potential default risk.
+
+Protocol Reports SHOULD disclose any practices or policies related to rehypothecation, or other forms of leveraging collateral.
+
+Explaining how these practices are monitored and controlled to prevent excessive leverage and mitigate liquidity crisis risks helps Protocol Users and Protocol Investors understand expectations placed on their own collateral, as well as assess the overall possibility that a particular Protocol will be exposed given a liquidity crisis elsewhere.
+
+4.2.6 Tokenomics Reports
+Protocol Reports SHOULD explain incentive mechanisms in the tokenomics design.
+
+Describe how rewards, inflation rates, and deflationary mechanisms are structured to ensure long-term viability and avoid economic flaws.
+
+Address any potential dilution risks and provide insights into the governance participation incentives for token holders.
+
+Protocol Reports SHOULD articulate the utility of the token beyond speculation.
+
+Describe its role within the protocol, potential future use cases, and any plans for expanding utility over time. This helps establish a foundation for stable demand and long-term value.
+
+4.2.7 Market Reporting
+It is important to report on the overall market in which a DeFi protocol is operating. This enables a comparison with similar products, and helps others Protocol Users to judge how well the Protocol Operators understand the overall market.
+
+Protocol Reports SHOULD outline key similarities and differences to other well-known Protocols.
+
+Protocol Reports SHOULD describe measures to detect and prevent market manipulation.
+
+Real-time monitoring can help detect manipulation such as wash trading, spoofing, or pump and dump schemes. Third party providers of monitoring services can use Machine Learning to analyse results of monitoring multiple Protocols, which can help detect the first occurrence of a particular type of market manipulation on a given Protocol.
+
+Measures to prevent market manipulation can include direct mitigations enforced by the Protocol such as trading limits.
+
+5. Risk Mitigation Strategies
+There are a number of good practices that can help mitigate specific types of risk. Many good risk mitigation practices are relevant to multiple classes of risk.
+
+5.1 Communication
+Protocols SHOULD maintain and monitor feedback channels to address user concerns and inquiries.
+
+User feedback can help identify many kinds of problem, from deficiencies in frontend design that confuse users to the extent that they create risks, to an additional warning channel for notification that someone has observed signs suggesting a protocol might come under attack.
+
+This can help protect against all types of risk.
+
+Protocols SHOULD provide educational resources, guidelines, or best practices for users to protect themselves, and encourage responsible participation in the protocol.
+
+Informed users are safer users. Helping Protocol Investors and Protocol Users understand the risks inherent in DeFi, how the Protocol functions, and how users can protect themselves, is an investment in better performance for users.
+
+This can help protect against all types of risk.
+
+Protocols SHOULD encourage independent audits of all aspects of risk.
+
+There are many ways to encourage independent review, from providing necessary information to directly incentivizing reviews that find problems. In the context of software, this includes bug bounties, but it can also include actively requesting and linking to independent reviews.
+
+This helps ensure confidence in the Protocol as well as validating key aspects, from the accuracy and fairness of the tokenomics implementation to the governance structure, or Compliance Risk minimization.
+
+This can help protect against all kinds of risk.
+
+Software SHOULD have third-party bug bounty programs.
+
+This allows external security researchers to report any identified vulnerabilities, ensuring a proactive approach to risk mitigation.
+
+The value of bug bounties on offer can influence the choice between reporting vulnerabilities responsibly and selling them to malicious parties or directly exploiting them.
+
+This is helpful for all Software risks
+
+Software SHOULD follow standard best practices for responsible vulnerability disclosure.
+
+There are many ways to manage vulnerability disclosure. To improve the likelihood that vulnerabilities are disclosed in a way that allows them to be fixed before they are exploited, the software industry has long adopted a set of best practices for disclosure.
+
+Broadly, these ask that disclosure is initially made privately, allowing a fix to be rolled out before the vulnerability becomes common knowledge. They often allow, or mandate, publication of the vulnerability and fixes applied after a certain time has elapsed, to incentivise fixing the software, enable the discloser to receive credit for their discovery, and demonstrate that the process is active and effective in protecting users.
+
+This is helpful for all Software risks
+
+Protocols SHOULD publish policies for locking, burning and issuing tokens.
+
+Because token supply has a fundamental impact on the value of any token, and insufficient transparency in tokenomics structures can erode trust and hinder market confidence, it is important to demonstrate how fundamental processes work.
+
+While onchain code can be read in principle, it is helpful to document how it works, and it is important to demonstrate that published policies not automatically implemented are followed, and that decisions to change the policies or deviate from them are well explained.
+
+This can help to mitigate Governance RIsks Tokenomics risk, and helps understand tokenomics-related Liquidity risk.
+
+Protocols SHOULD document the reconciliation process for each period to serve as the audit trail for their accounting process.
+
+Policy documentation will help to establish clear internal guidance on the various accounting treatments for business operations and revenue streams. Considerations for the cost basis methodology followed by the company, chart of accounts mapping and third party/internal transfer contacts are a few that will impact the ability for companies to streamline their reporting accurately.
+
+Where third parties are involved in preparing financial information (for example fund administrators or digital asset accounting software providers), entities SHOULD evaluate these relationships and obtain a complete understanding of both parties’ responsibilities with regards to designing and implementing relevant internal controls over financial reporting.
+
+As third parties’ software can be utilized in consuming and synthesizing information directly from the blockchain and synthesizing into accounting entries, entities SHOULD consider whether a third party is reputable, regulated, insured and audited, and also whether it provides a service organization control (SOC) report, as appropriate.
+
+As the crypto asset and blockchain space has matured in recent years, several service organizations — including private key custodians and blockchain data providers — have begun providing SOC 1 Type 2 reports.
+
+This helps mitigate:
+
+Tokenomics risk
+Compliance and Legal Risk
+Tax risk
+Accounting Conformance Risks
+Operational Accounting Risks
+Credit risk
+Counterparty risk
+Market risk
+Liquidity risk
+Protocol Providers SHOULD produce accurate and timely financial information for reporting purposes.
+
+This helps Protocol Users and Protocol Investors to understand and mitigate:
+
+Tokenomics risk
+Compliance and Legal Risk
+Tax risk
+Accounting Conformance Risks
+Operational Accounting Risks
+Credit risk
+Counterparty risk
+Market risk
+Liquidity risk
+5.2 Detecting and Responding to Attack Threats
+protocols SHOULD have incident response available "24/7".
+
+Given the potential for rapid exploitation of vulnerabilities discovered in DeFi, it is important that Protocols can respond very rapidly to any announcement or evidence of a vulnerability.
+
+This can help mitigate
+
+all Software risks
+Governance risk
+Custodial Risk
+Liquidity risk
+Protocols SHOULD actively develop threat models.
+
+From understanding the potential impacts of changes to liquidity markets, to identifying security vulnerabilities in code, modeling threats a Protocol can face is an important tool in ensuring that it can adequately assess the risk and so take appropriate mitigating action.
+
+This helps protect against various kinds of risk, particularly:
+
+All Software risks
+Governance risk
+Custodial Risk
+Tokenomics risk
+Compliance and Legal Risk
+Operational Accounting Risks
+Credit risk
+Counterparty risk
+Market risk
+Liquidity risk
+DeFi Protocols SHOULD use automated real-time monitoring to detect attacks or increased risk.
+
+Real-time monitoring can provide warning of attacks in progress, which is important to many mitigation strategies.
+
+Smart Contracts, Bridges, and Oracles can be subject to a steady stream of attacks, whose result can be a rapid and calamitous loss of value, but also to a constant stream of very small attacks, leaching significant amounts of value over a longer timeframe.
+
+Automated monitoring can also provide crucial information related to MEV attacks, and changes that increase Liquidity Risk. Comparing standard behaviors across a Bridge can provide an early clue to when something is going wrong, whether that is due to a temporary problem such as network latency, or a malicious attack.
+
+Real-time monitoring bots can send an alert, or perform a predetermined action or series of actions automatically, in case of an emergency.
+
+Identifying either type of attack and taking remedial action can protect a significant proportion of loss.
+
+This approach is particularly helpful to mitigate
+
+Software risks, especially
+Smart Contract Risk
+Blockchain Risk
+Oracle Risk
+Bridge Risk
+MEV risk
+Governance risk
+Liquidity risk
+DeFi Protocols SHOULD use machine-learning and incident reports to identify attacks in progress or preparation.
+
+Machine-learning tools and databases of known attacks can help identify anomalous user behaviour that may be an attack, or preparation for one. Based on knowledge acquired on a different Protocol, they can also help identify the first occurrence of a new class of attack against a specific DeFi Protocol, increasing security compared to reliance on knowledge gained from only that Protocol.
+
+Machine-learning systems are based on a training dataset, and inherit limitations in their capabilities from that dataset, just as much as the value of historical databases is intrinsically related to their content sources.
+
+This is particularly helpful to protect against
+
+Software risks, especially
+Smart Contract Risk
+Blockchain Risk
+Oracle Risk
+Bridge Risk
+MEV risk
+Governance risk
+Market risk
+Liquidity risk
+5.3 Information Security and Hardening
+There are security practices and risk mitigation strategies that apply to all software, often collectively known as Infosec.
+
+Software components SHOULD use secure channels to communicate.
+
+Various techniques exist to eavesdrop on internet communication. Encrypting information exchanged reduces the possibility that a malicious actor can intercept it and use it in an attack. This can particularly help mitigate:
+
+Most kinds of Software risks, particularly
+Oracle Risk
+Bridge Risk
+MEV risk
+Governance risk
+Custodial Risk
+Software SHOULD encrypt data storage.
+
+Software SHOULD NOT store private data where it is globally accessible even if encrypted.
+
+Encryption provides a certain level of protection for data, but all known encryption can be broken given sufficient time and resources. Ensuring private data is protected by measures beyond encryption, such as keeping it Airgapped, is important to protect it long term, helping to mitigate Custodial Risk and Compliance and Legal Risk.
+
+Protocols SHOULD undergo a security review for all Software Components deployed as part of a DeFi protocol.
+
+It is important that security reviews cover the exact code that is deployed. There are many known cases where changes to only one or a few lines of previously tested code introduced a significant new vulnerability.
+
+In this context, integrating software effectively means developing software, and is a common source of vulnerabilities. Any integration work needs specific review to ensure it has not created vulnerabilities.
+
+There are independent security specialists for many kinds of software - where relevant these are specified for the individual software components as additional requirements.
+
+Many common software components have already undergone extensive security review. While it is reasonable to provide links to assessments rather than repeating them, it is important to actively evaluate those assessments, instead of simply assuming their existence proves their quality.
+
+It is generally a good practice to use widely-used and well-tested software. A potential exception is where there is a considerable risk due to the public nature of software such as Smart Contracts, or through the use of common Open Source components that expose a so-called Supply Chain Risk, where a common component incorporated in a complex piece of software is exposed to compromise.
+
+This helps mitigate all Software risks, and also Compliance and Legal Risk
+
+Protocols SHOULD run Vulnerability Assessments for any upgrades to software components.
+
+Any time any software is upgraded, there is a risk not only that the upgrade itself introduces a vulnerability, but that a new vulnerability is introduced through the interactions of the upgraded softeware with other parts of the system.
+
+This helps mitigate all Software risks, and also Compliance and Legal Risk
+
+Protocols that use Oracles SHOULD ensure that their Oracles have multiple sources of data, or use multiple Oracles, to ensure the redundancy allows for failover when necessary.
+
+This helps mitigate Oracle Risk
+
+Oracles SHOULD use Time-Weighted Average Pricing to detect and if necessary smooth sudden spikes.
+
+Time-weighted Average Pricing (or TWAP) is a common technique that uses a series of data points to generate a smoothed or trend price from a single data source.
+
+It can be used both to set pricing, and as a benchmark to check whether prices are deviating sharply from a trend, which can indicate anamolous behaviour including a security breach in progress.
+
+This helps mitigate not only Oracle Risk but is an important mitigation for MEV risk and Governance risk
+
+Protocols that use Oracles SHOULD ensure each Oracle can be updated or removed when necessary.
+
+This helps mitigate Oracle Risk
+
+Protocols SHOULD provide transaction ordering procedures that mitigate the Malicious Extraction of Value from other users' transactions.
+
+Ensuring that transactions are processed in the order received can help mitigate timing attacks such as front-running.
+
+This helps mitigate MEV risk
+
+5.4 Testing
+5.4.1 DeFi Protocol Reviews
+DeFi Protocol Reviews can give users a simple quality score that is easily understood. They typically assess DeFi Protocols according to a comprehensive quality standard, covering multiple aspects of the Protocol such as Smart Contracts, Access controls, Oracles, Documentation and Transparency.
+
+Normal practice is that the standard used, and resulting reports, are available publicly.
+
+5.4.2 Smart-Contract Reviews
+Smart Contract Reviewers, commonly known in the blockchain community as "auditors", are individual or teams of smart contract engineers that specialize in assessing the security of smart contracts, producing Security Reviews A Smart Contract Security Review is not an audit as understood by the accounting community, although that is a name often given to it in the blockchain and security communities. Rather, it is a time-limited assessment of the Smart Contract's code, attempting to identify any security vulnerability.
+
+The final output of a Smart Contract Security Review is usually a report, that can be a highly technical document discussing details of software, documentation, and possible abuses. Its intended primary audience is generally the Protocol Developers responsible for the smart contracts the Protocl uses.
+
+The format and content of the report can vary widely between reviewers.
+
+Reconciliations are a key part of establishing good operational accounting controls. Completeness checks against source data such as wallet balances, liquidity pool balances and staking protocols are essential to ensure data integrity.
+
+Protocols SHOULD perform Smart Contract security review, and any necessary rectification, before code is deployed to the blockchain.
+
+Once deployed, the code of Smart Contracts is publicly visible. Because vulnerabilities can often be exploited rapidly, it is important to ensure the code is well-tested before it becomes available for hackers to analyse.
+
+This is important to mitigate Smart Contract Risk.
+
+Protocols SHOULD assess the security of the underlying blockchain on which they deploy.
+
+Evaluations of a blockchain can include Formal Verification, assessment of identified vulnerabilities or weaknesses, and explanations of improvement made as a result of issues identified in an assessment.
+
+This helps mitigate Blockchain Risk
+
+Protocols SHOULD test frontend applications in a controlled environment before deployment or upgrades.
+
+It is important to identify potential vulnerabilities that can be exploited by malicious actors. These vulnerabilities can range from interface design that leads users to do things they did not intend, through technical vulnerabilities in service workers, webp, node modules and other components, to leaking user data to malicious third parties who can then exploit it.
+
+Managing these risks for blockchain based products is an essential step in ensuring end-to-end security. By testing the applications in a controlled environment, companies can identify potential vulnerabilities that can be exploited by malicious actors before deploying them.
+
+This helps mitigate User Interface risks in particular, but is also relevant to other Software risks
+
+Protocols SHOULD conduct regular stress tests and scenario analyses to assess the protocol's resilience to liquidity shocks and adverse market conditions, and identify possible mitigations for vulnerabilities found.
+
+This is particularly relevant for Market risk and Liquidity risk, but can also help mitigate:
+
+all Software risks
+Governance risk
+Custodial Risk
+Tokenomics risk
+Compliance and Legal Risk
+Operational Accounting Risks
+Credit risk
+Counterparty risk
+5.5 Implement appropriate standards
+A number of industry standards are relevant to DeFi. Reflecting its nature as software-mediated finance, these cover multiple areas, including Software and User Interfaces, regulatory compliance and accounting standards. Following industry standards helps to maintain consistency and reliability in assessment, and reduce problems arising when a new reviewer or Protocol Developer begins working with a protocol.
+
+Protocols SHOULD apply relevant standards, as specified in those standards.
+
+Closely following the development of standards and regulation, helps to understand the situation of a given standard at any given time. Participation in the development of those standards helps deepen that understanding, and can demonstrate leadership in the field. See also participating in industry groups in § 5.7 External factors: Compliance.
+
+This can help mitigate many types of risk.
+
+Software Security Reviews SHOULD align with industry standards.
+
+This can make it easier for Security Reviewers to check that Security Reviews follow Best Practices, and helps mitigate all Software risks
+
+Smart Contracts used in a protocol written in solidity SHOULD have a security review according to the latest release of the EEA EthTrust Security Levels Specification [EthTrust].
+
+There are many organisations that provide specialised security review of Smart Contracts. The EEA EthTrust Security Levels Specification [EthTrust] is a standard for Smart Contract security reviews, that ensures testing covers known vulnerabilities.
+
+As of 13 June 2024, the latest release version of the specification is Version 2. However, an Editors' Draft is also publicly available, that can include some more up-to-date guidance.
+
+This helps mitigate Smart Contract Risk in particular.
+
+Protocol Developers SHOULD test software and API security against OWASP standards.
+
+OWASP is one organisation that develops projects industry can use to identify (and address) Web and other application design risks:
+
+Web Application Security
+OWASP Application Security Verification Standard [owasp-asvs]
+Mobile Application Security
+OWASP Mobile Application Security Verification Standard [owasp-masvs]
+API Security
+OWASP API Security Project [owasp-apis] https://owasp.org/www-project-api-security/
+This is particularly relevant to User Interface risks, but can also mitigate other Software risks
+
+DeFi front end interfaces SHOULD have a User Experience assessment that includes an accessibility review
+
+It is important to discover whether user experience, or lack of accessibility, can expose users to a higher likelihood of mistakes through a lack of understanding of options offered to them.
+
+This is particularly valuable to mitigate User Interface risks.
+
+Web-based interfaces SHOULD conform to level AA or higher of [WCAG]
+
+W3C provides the standard Web Content Accessibility Guidelines [WCAG], a global standard to ensure access to web content and applications for people with disabilities.
+
+This is particularly valuable to mitigate User Interface risks. In many jurisdictions it is also important for Compliance and Legal Risk
+
+Bridges SHOULD follow the suggestions of the EEA Crosschain Security Guidelines.
+
+The EEA Crosschain Security Guidelines [xchain-sec] describes some risks introduced by operations across blockchains, and describes some possible mitigations. It is not as detailed a set of requirements as [EthTrust], but it is helpful for the specific case of working across two (or more) blockchains.
+
+This is particularly relevant to mitigating Bridge Risk
+
+Protocols, Investors and Users SHOULD ensure key management procedures are compliant with relevant standards to ensure robustness and survivability.
+
+Procedures that can mitigate Custodial Risks are found in general-purpose standards like [SOC2], [ISO27001]. [CCSS] is a standard specifically for securing digital assets, and includes tiered requirements for secure key management by third parties, with a focus on key creation, key storage, and key control, as well as proof that funds are held by a third party.
+
+This helps mitigate Custodial Risk in particular.
+
+Third-party key custodians SHOULD conform to the requirements of [CCSS], at the highest possible level.
+
+This helps mitigate Custodial Risk in particular.
+
+Incident reports SHOULD use the STIX format as far as possible to produce interoperable information.
+
+[STIX] is a standardised format for reporting security incidents. Encoding as much information as possible about a security incident in a machine-readable interoperable format enables more efficient comparisons and information compilation.
+
+It is important to be careful with the use of such information. Naive automated processing could, if poorly implemented, introduce risks caused by deliberately crafting misleading or false reports to induce a reaction as part of an attack strategy.
+
+This helps mitigate Software risks
+
+5.6 Key Actors and Counterparties
+While some Protocols are completely automated, in many cases there are people who can influence the performance of a Protocol. These include Smart Contract Operators, Protocol Operators, those involved in governance, and those who have sufficient holdings to be able to influence the liquidity and market performance of a Protocol.
+
+Protocols SHOULD ensure that ownership of governance tokens is distributed among independent parties, and resistant to concentration.
+
+Many protocols include some form of non-voting governance, or governance by a specially limited group, where one or more accounts are designated as owners or administrators with special powers. These can include the power to block decisions that do not reflect the goals of a Protocol, pause the operation of a Protocol, and other actions that have a significant impact on the Protocol's operations.
+
+In practice this is a limitation on how decentralized a Protocol is. It can help mitigate a number of Governance risks, although it can exacerbate others.
+
+Protocols SHOULD use Multi-Signature Wallets for governance decisions, that require more than one but fewer than all eligible parties to authorise a transaction.
+
+To balance the risks of a single rogue actor, or of one key being compromised for example through a phishing attack, against the risk that some parties are not available in a timely enough manner for normal operation, it is important to set governance parameters somewhere between allowing any signatory to act, and requiring all signatories.
+
+Non-voting governors, or Protocol Operators, are likely to be more available than a general governance group of investors, and this is an important consideration in determining voting mechanisms and thresholds for governance decisions.
+
+This helps mitigate Governance risk.
+
+Protocols SHOULD balance voting quorum against governance token supply and distribution.
+
+Ensuring that the requirements for voting match the actual distribution and supply of the token can help protect against attacks that rely on unbalancing those requirements, such as flashloan attacks.
+
+This helps mitigate Tokenomics risk, Governance risk, and other Counterparty risk that could encompass Market risk.
+
+Investors and users SHOULD conduct due diligence on Smart Contract Operators for the Smart Contracts that are part of a DeFi protocol.
+
+If there are no KYC services that can vouch for the identity and background of Smart Contract Operators, it is possible that there is a deliberate effort to evade scrutiny. In any event, it makes risk assessment very difficult.
+
+This helps mitigate Governance risk and other Counterparty risk.
+
+Protocol Providers SHOULD evaluate whether the individuals implementing and performing the controls have the right skills to effectively prevent or detect errors or fraud that could result in material misstatements in the financial statements.
+
+Such controls can include reconciliation of what is presented in a financial statement against on-chain data. Particularly in cases where an on-chain position has been entered and is yet to be closed (for example liquidity pool tokens staked in a protocol), tools to track on-chain positions can be useful for reconciliation.
+
+This helps mitigate Governance risk and Operational Accounting Risks
+
+Protocol Providers SHOULD establish internal controls for accounting workflows.
+
+These include segregation of duties, reconciliations, policy documentation, and security controls for assets in their accounting function.
+
+Segregation of duties include clear internal policies around authorizing different individuals to oversee the initiation, execution and recording of transactions. Proper permissions rules within ERP and subledger softwares are a good best practice recommendation here alongside authorized signatory documentation.
+
+Because of the importance of accounting in identifying problems, this can help mitigate a variety of risks:
+
+Governance risk
+Custodial Risk
+Tokenomics risk
+Compliance and Legal Risk
+Tax risk
+Standards Conformance Risks
+Accounting Conformance Risks
+Operational Accounting Risks
+Credit risk
+Counterparty risk
+Liquidity risk
+Protocols SHOULD monitor potential users accumulating stakes in their tokens.
+
+While gathering capital is a fundamental goal in capitalism, and in DeFi, users doing so - especially anonymously - may be a sign that they are preparing an attack on a DeFi protocol. This can help mitigate:
+
+Bridge Risk
+Governance risk
+Tokenomics risk
+Credit risk
+Counterparty risk
+Market risk
+Liquidity risk
+5.7 External factors: Compliance
+It is important to consider how transactions correspond to existing patterns that are covered by relevant accounting standards. Although there is little in the way of settled guidance, there is a notable pattern of using Fair Market Value. A FASB Exposure Draft suggesting directions for GAAP [fasb-expodraft] takes this approach, which matches requirements that cover entities considered Investment Companies who are already meant to be using it.
+
+Identifying whether DeFi assets meet requirements defined for accounting standards can help ensure that accounting procedures are recognisably reasonable attempts to follow applicable standards.
+
+Protocols, investors and users SHOULD have a robust process in place to assess potentially relevant court decisions, laws and regulations, and monitor pending legislation and rule-making.
+
+Regulation of DeFi is in its infancy, and to some extent in a state of flux. Monitoring ongoing development is important to help mitigate Governance Risks and Compliance and Legal Risks including
+
+Tax risk
+Standards Conformance Risks
+Accounting Conformance Risks
+DeFi users, investors and Protocols SHOULD participate in industry groups that focus on managing regulatory compliance and legal risk.
+
+While regulation of DeFi is in its infancy, and in a state of flux, direct participation in discussions that impact regulation can help understand likely changes. Helping regulators understand the mechanics of DeFi markets is important to ensure that regulation is appropriate to meet their goals of fairly balancing the requirements to protect Protocol Users who potentiall include holders of substantial and important public funds,as well as the Protocol Investors and Protocol Developers who make DeFi possible.
+
+This helps mitigate Compliance and Legal Risks including
+
+Tax risk
+Standards Conformance Risks
+Accounting Conformance Risks
+Protocols SHOULD implement KYC/AML procedures appropriate to the jurisdictions relevant to their investors and users, including covering Protocol Operators.
+
+This helps mitigate Compliance and Legal Risks as well as Governance risk, Custodial Risk, and other Counterparty risk.
+
+Protocols SHOULD explain why an asset is considered a security or not.
+
+With ongoing uncertainty around what kind of DeFi assets are securities, and what should be treated merely as utilities, documenting a clear justification for considering a given asset in one way or another helps mitigate Compliance and Legal Risks.
+
+Protocols SHOULD document their accounting practices and the rationales behind specific methods chosen to treat classes of assets and events.
+
+This helps mitigate Compliance and Legal Risks including
+
+Tax risk
+Standards Conformance Risks
+Accounting Conformance Risks
+Note that multiple accounting firms have taken the stance that wrapping and unwrapping tokens is a non-taxable event.
+
+Protocols SHOULD document the reconciliation of reporting data against on-chain positions.
+
+Best practice is to do this through a subledger product or as a manual internal workflow.
+
+Best practice recommendation reports include asset roll forward, a general ledger report and a transaction detail report.
+
+The FASB has proposed to require asset roll forward be a part of all digital accounting processes and gives a high level view of wallet and asset balances [fasb-expodraft]. Ledger entries will help to reconcile that all activity has been mapped and categorized correctly and transaction detail will ensure completeness on a granular level in a given period.
+
+High level transaction monitoring can complement this process as well, and sample checking for inappropriate or unusual transactions can help detect hacks or fraud.
+
+This helps mitigate Operational Accounting Risks.
+
+Example 13: wrapped tokens: an accounting challenge
+There is no specific guidance in either GAAP or the IFRS on how to treat Wrapped Tokens.
+
+One could potentially treat wrapping and burning as a taxable event or non-taxable event. Note multiple accounting firms have taken the stance that it is a non-taxable event.
+
+Not a Taxable event - the argument
+The Exchange Requirement is not met when the ownership of the asset is not transferred from one party to another. The Wrapped Token represents the ongoing interest in the native token, and so the wrapping event falls under a same asset characterization.
+
+Material Difference requirement shows a meaningful change in the parties’ economic position. In wrapping a coin, in most situations, the Wrapped Token performs identically to the underlying token. The intent is not to purchase a new asset, but to add a layer to the assets functionality.
+
+Both the Wrapped Token and native token are treated as one. The minting and burning process does not trigger a disposal and acquisition of an asset.
+
+Additional considerations:
+
+Cost basis impacts - cost basis is only tracked as a combined token. Minting and burning the Wrapped Tokens do not impact cost basis as tokens are treated as one. Cost basis transfers to and from the newly Wrapped Token.
+Capital gains and losses - wrapping and unwrapping have no meaningful impacts to realized gains or losses. Only the true disposal of the asset impacts gains or losses.
+Taxable event - the argument
+Swapping your tokens to the wrapped version is a disposal of one asset and the acquisition of another asset. Pricing for the token and Wrapped Token theoretically have approximately the same value, but during periods of high volatility there can be increased levels of de-pegging. Therefore, assets have to be tracked by lot to determine the capital gains or losses associated with a disposal.
+
+Additional considerations:
+
+Cost basis impacts - a wrapping event will trigger a new cost basis for the Wrapped Token. The burning event will also trigger a new cost basis for the purchase of the original token. Costs are tracked on each coin independently.
+Capital gains and losses - Depending on your cost methodology the wrapping event can have significant impacts on your tax and financial reporting. Each wrapping event represents a new disposal of an asset. Gains or losses have to be be tracked for each asset.
+Overall costs: The tax costs of using a Wrapped Token can outweigh its benefits. No cash is being exchanged in a minting/burning process. Any tax liability will need to be funded from other sources.
+5.8 User Risk Management
+In any financial system, there are certain actions that users can take to improve their understanding of, and effectively manage their exposure to, the inevitable risks.
+
+Protocols SHOULD enable users to set slippage limits on transactions.
+
+Limiting the amount of slippage compared to the expected value of transactions and reverting where there is too much allows users to mitigate MEV risk
+
+Protocol Users and Protocol Investors SHOULD closely monitor their exposure and set appropriate risk limits.
+
+Setting risk limits through control on exposure, hedging, and the like are important to ensure that the value at risk is known and acceptable.
+
+This helps mitigate Credit risk
+
+Protocol Users and Protocol Investors SHOULD monitor the development of Protocols, especially governance decisions
+
+Many Protocols have the capability to change, either through governance decisions or software upgrades. If Protocol Users or Protocol Investors are not aware of changes, they can be exposed to additional risk.
+
+This helps mitigate:
+
+Governance risk
+Tokenomics risk
+Compliance and Legal Risk
+Tax risk
+Standards Conformance Risks
+Accounting Conformance Risks
+Operational Accounting Risks
+Credit risk
+Counterparty risk
+Market risk
+Liquidity risk
+Protocol Users and Protocol Investors SHOULD have access to real-time monitoring of core Protocol health metrics.
+
+This helps mitigate most risks.
+
+5.9 Reserves and Hedging
+To mitigate Credit Risk, many DeFi systems rely on Overcollateralized loans, and automatically liquidate positions based on trigger conditions that are usually designed to ensure there is sufficient collateral available to recover the outstanding debt in full. A healthy secondary market for collateral maintains the incentive for a liquidator to operate, ensuring a reasonable level of security while not requiring so much Overcollateralization nor setting Liquidation Trigger Values so high that the credit market itself collapses.
+
+While Overcollateralization in lending DeFi applications helps mitigate the Liquidity Risk, it might not function as an effective failstop in certain situations like sudden prices shocks and fast moving markets. With insufficient timely demand from liquidators in the market, the liquidation mechanism can fail, causing Bad Debt, and a loss of confidence in the Protocol.
+
+Protocols SHOULD demonstrate Adequate Capital Reserves, including sufficent reserves for liquidity that are not leveraged.
+
+Where reserves held to manage liquidity are leveraged, they are most likely to be unavailable precisely when they are needed. Holding demonstrably unleveraged reserves is an important mitigation for Liquidity risk, and in certain cases helps mitigate Compliance and Legal Risk.
+
+Users, protocols and investors SHOULD hold a range of tokens or other hedges against a liquidity problem in a given Protocol.
+
+This is particularly relevant to mitigating Liquidity risk.
+
+A. Additional Information
+A.1 Status of this Document
+The Enterprise Ethereum Alliance (EEA) is publishing this Discussion Paper that highlights observed and aspirational best practices for identifying, understanding and managing risks arising from the use of DeFi protocols.
+
+The group hopes this document will help promulgate robust frameworks particularly for institutions that do, or want to, use and invest in DeFi protocols. The group therefore hopes for feedback on improvements that will make the document even more useful for such audiences.
+
+The content of this document has been approved by the EEA Board, It does not represent the opinion of any particular EEA member..
+
+A.1.1 Expected Development Timeline
+This version was published on 17 July 2024.
+
+The Editor's draft is being updated as the Working Group decides on responses to the feedback received. These updates will generally not be more frequent than every two weeks.
+
+The Working Group expects to obsolete this document by publishing a version 2 as an EEA technical specification sometime in 2025.
+
+A.1.2 Feedback requested
+The Working Group requests feedback on the document in general. Specific questions the group asks for feedback on include:
+
+Do Smart Contract evaluators need to be independent from protocol/project owners? If so, what independence standards might they adhere to? Does a unique independence framework need to be developed?
+Is there a need for new common standards that market participants can follow?
+What common standards do market participants follow, that ought to be mentioned in this document?
+Are there other risk factors that are relevant users of DeFi protocol that fall outside of the areas identified?
+Are there elements of risk not sufficiently described?
+Are there possible mitigations, including aspirational best practices, that are not included?
+What more can Protocol Developers do to facilitate user risk management in this area?
+Does the accounting for DeFi activities reflect a view that a DeFi protocol is a principal to a transaction, or an agent for a transaction?
+Please send any comments on this work to the EEA through https://entethalliance.org/contact/, using [Defi Risks paper] as a subject, or by raising an issue or commenting on existing issues in the public GitHub repository https://github.org/entethalliance/drama-public.
+
+A.1.3 Copyright License Terms
+This document is licensed under the terms of the Apache License, Version 2.0 [License] Unless otherwise explicitly authorized in writing by the EEA, you can only use this document in accordance with those terms.
+
+This document is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, neither express nor implied.
+
+See the [License] for the specific language governing permissions and limitations automatically granted by EEA.
+
+A.2 Background: DeFi basics
+Decentralized Finance (more commonly DeFi) is a finance system based on blockchain technology. DeFi uses computer programs called Smart Contracts to automate many types of financial interactions. In principle, anyone with an internet connection and the necessary software can write a Smart Contract, deploy it to a blockchain, and likewise can invoke a Smart Contract. This removes the technical need for an intermediary such as a broker or bank to interact with a Decentralized Finance system.
+
+Smart Contracts are programs, stored on the blockchain. Because Smart Contracts can be invoked by other Smart Contracts, it is possible use them as components to construct a complex system.
+
+Smart Contracts implement the core functionality of DeFi, most crucially creating, manipulating, transferring, and destroying Tokens, which are digital artifacts used to represent value on a blockchain. Smart Contracts are also used to provide and manage automated market makers, Decentralized Exchanges, Decentralized Lending, insurance protocols, and other automated financial instruments.
+
+Because Smart Contracts can be invoked by other Smart Contracts, it is possible use them as components to construct a complex system.
+
+A.2.1 Wallets
+Wallets are programs that allow users to store and manage many kinds of tokens, such as Ether, bitcoin, and other tokens, typically through a simple user interface. A wallet holds the user's private and public cryptographic keys.
+
+The user's Public Key acts as a publicly visible account number, An Externally Owned Account (or EOA) that is controlled by a user, relying on their ability to sign with their private key as proof that they have access to their own address, to validate transactions made from that account. used as an address for individuals and other programs to transact with.
+
+The Private Key is a very large number, meant to be known only to the owner of the wallet, that is combined with the Public Key to authorise transactions. This means anyone who knows or learns the private key can control the account, making transactions such as transfers to another EOA or interacting with a Smart Contract.
+
+Wallets primarily intended for personal use typically operate on a personal computer or mobile device, with easy-to-use interfaces, but providing limited protection of keys stored on the device or another physical token. These wallets are generally not used by institutions except as part of disaster recovery procedures.
+
+Institutional grade wallets for organizations selecting Self-custody commonly have governance policy engines, higher security and risk management controls and can offer both web-based and API interfaces.
+
+For example, to prevent single points of abuse Multi-Signature Wallets require multiple keys to transact, meaning no single actor can create a transaction on behalf of the wallet. Similarly, Multi-Party Computation splits the key into shards distributed among multiple parties, where only aggregating the results of computation by a set of those parties with information only they hold, can authorise a transaction.
+
+Wallets are often referred to as 'cold' or 'hot'. A Cold Wallet consists of a small storage device that is not connected to the internet or any running machine (also known as Airgapped) which holds a user's private keys and can be used for signing. The tokens are not stored on the device itself, but the private keys' security in this paradigm are considered to be safer than keys stored on a laptop or other device. A Hot Wallet is stored on a running machine, such as a mobile phone or laptop, and usually consists of an app to help users sign transactions. A hot wallet is generally considered more vulnerable to compromise via hacking because it is connected to the internet,
+
+A Custodial Wallet is a wallet whose private keys are managed by a third party. This is a common practice for larger DeFi institutions (such as Centralized Exchanges or CEXs) that hold many tokens on behalf of their users. A user accesses their tokens through an account with the institution, and Private Keys are held in the custody of the institution. Though large institutions may become targets of attack, they usually employ advanced security tactics and technologies to enforce the secure storage of these keys beyond that of a typical individual wallet user.
+
+A.2.2 Decentralized Exchanges (DEXs)
+A Dex|decentralized exchanges" id="dfn-dex">Decentralized Exchange (or DEX) is a platform for trading digital assets that operates on a blockchain with Smart Contract capabilities (for example Ethereum). Unlike centralized exchanges, which rely on an authority to manage transactions and centralize custody of assets, decentralized exchanges run on a peer-to-peer (P2P) network without any intermediary. Transactions, reserves, and governance rules are automated by Smart Contracts, and users are responsible for the custody of their assets.
+
+Liquidity for a DEX is generally provided by Liquidity Providers who deposit assets into a Liquidity Pool maintained by the software that runs the protocol. Liquidity Providers usually receive LP tokens, that represent a proportional claim to the pool assets. Liquidity Providers can also be rewarded by sharing a portion of the trading fees in the pool, and other rewards offered by the protocol.
+
+Traders swap assets available in the Liquidity Pool (and are typically charged trading fees for doing so). These processes are governed by an Automated Market Maker (or AMM), which consists of a set of Smart Contracts that encode rules and execute transactions. An AMM typically adjusts the reserves in response to trader activity, based on predetermined mathematical relationships designed to incentivize traders to arbitrage away any differences between the price of the assets in the pool and in the external market.
+
+A.2.3 Decentralized Lending Protocols
+Decentralized Lending protocols are blockchain based platforms that allow users to lend and borrow digital assets without the need for intermediaries, such as banks or financial institutions.
+
+The protocols are based on self-executing Smart Contracts that encode the terms of the agreement between borrower and lender, for example dynamically adjusting interest rates in response to demand. The terms of the loan are automatically enforced, with collateral typically securely held in escrow until the loan is paid back.
+
+Decentralized Lending often uses a shared Liquidity Pool to provide the funds to lend. Lending and borrowing interest rates are generally dynamically adjusted in response to supply and demand for assets in the pool based on mathematical rules that are encoded in Smart Contracts.
+
+Borrowers generally provide collateral for their loan by depositing another asset as collateral for that lending protocol. Loans are often Overcollateralized, with collateral deposited to secure the loan that is of higher value than the loan, i.e. an LTV less than 1. The degree of Overcollateralization required (or LTV) typically depends on the volatility of the borrowed asset and the collateral.
+
+Typically liquidation is triggered automatically, offering the collateral for sale on the market, in exchange for repaying the loan or in an auction, if the level of collateralization falls below the LTV.
+
+A.2.4 DeFi ecosystem utilities
+DeFi often relies on a set of utilities, that can facilitate efficient allocation of risk capital:
+
+A.2.4.1 Stablecoins
+A Stablecoin is an on-chain asset designed to maintain a Peg: a specific market value compared to a reference asset such as a Euro or US Dollar, and to be easy to exchange for cryptocurrency such as ETH. Their generally stable reference value, compatibility with DeFi, and the fact it is usually easy to exchange them have made them a key component of the ecosystem.
+
+Stablecoins can maintain their Peg through using other assets as collateral, similar to the Gold Reserve policies that underpinned many currencies in the 20th Century. Real-World Asset-backed Stablecoins ("RWA-backed") rely on collateral held in "fiat" currencies, but Stablecoins can also be backed by crypto assets or other commodities.
+
+Algorithmic Stablecoins (also known as Seignorage-style Stablcoins) use an automated process to maintain their Peg, for example issuing new coins to reduce the Stablecoin's value through inflation if it is above the Peg, and burning coins to reduce supply and increase value when it is below.
+
+A.2.4.2 Wrapped Tokens
+Cryptocurrency tokens do not function on every blockchain network. For example, you cannot send BTC directly to a DeFi protocol. Wrapped tokens represent another cryptocurrency, and allow moving assets between different blockchains. They can be traded directly within a given blockchain.
+
+Wrapped Tokens are typically created by paying a given amount of the underlying token to a service that will hold it in escrow and provide the Wrapped Tokens in exchange. Thus Wrapped Tokens are in principle backed by an equal amount of the underlying token. To exchange the Wrapped Token for underlying tokens the original cryptocurrency is unlocked and corresponding Wrapped Tokens are destroyed (or Burned). It is important to note that the value may not compare exactly to the underlying (wrapped) asset.
+
+Where a payment is made on one blockchain, and tokens are provided on another, the service is known as a Bridge.
+
+On Ethereum-based blockchains the native token of the chain, ETH, cannot be used in complex DeFi transactions without first being converted into an ERC-20 token such as Wrapped Ether (WETH). Most contracts that take ETH as an input will wrap it into WETH before transacting with it. This makes wrapping and unwrapping back into the native token a very common occurrence on Ethereum-like chains.
+
+A.2.4.3 Yield “farming”
+Yield farming allows individuals to earn rewards by depositing their cryptocurrency or digital assets into a decentralized application (DApp). It encompasses two distinct types: Subsidized Yield and Real Yield.
+
+Subsidized Yield is protocols incentivizing users to provide liquidity or encourage usage by offering rewards from funds controlled by the protocol.
+
+On the other hand, Real Yield farming involves assuming risks to provide a specific service. For example Liquidity Providers for a DEX take on the risk of Impermanent Loss in exchange for providing liquidity and receiving compensation. Similarly, Liquidity Providers for Decentralized Lending Protocols take on the risk of Bad Debt in exchange for interest payments.
+
+A.2.4.4 Derivatives
+The size of the DeFi derivatives market, barely existent in 2020, now represents a large and growing share of on-chain trading activity. These protocols allow users to gain exposure to the price of an underlying asset without actually owning the asset. There are many different variations of these protocols, and the risks are varied based on protocol design and tokens available.
+
+A popular DeFi derivative called a perpetual option allows traders to pay a funding rate to keep a synthetic position open (long or short) that provides leveraged exposure to the underlying price of the token (1-100x leverage).
+
+A.3 Defined Terms
+The following is a list of terms defined in this Specification.
+
+Airgapped
+Algorithmic Stablecoins
+AML
+Automated Market Maker (or AMM)
+Back-Running
+Bad Debt
+Blockchain Risk
+Book Value
+Bridge
+Bridge Risk
+Burned
+Censoring
+Circulating Market Cap
+Circulating Supply
+Cold Wallet
+Compliance Risks
+Counterparty risk
+Credit Risk
+Custodial Risk
+Custodial Wallet
+Custodians
+Decentralized Exchange (or DEX)
+Decentralized Finance (more commonly DeFi)
+Decentralized Lending
+Divergence Loss
+Externally Owned Account (or EOA)
+Fair Market Value or (FMV)
+Financial Accounting Standards Board (or FASB)
+Front-Running
+Fully Diluted Market Cap
+Gas Usage
+Generally Accepted Accounting Principles, or GAAP
+Governance Risk
+Honeypot
+Hot Wallet
+Impermanent loss
+Infosec
+International Accounting Standards Board (or IASB)
+International Financial Reporting Standards or IFRS
+KYC
+Latency
+Liquidity Pool
+Liquidity Providers
+Liquidity Risk
+Loan to Value (or LTV)
+Loss vs Rebalancing, (or LVR)
+LP tokens
+Maliciously Extracted Value
+Market Risk
+Maximum Possible Supply
+MCAP/Fees
+MCAP/TVL
+Miners
+Multi-Party Computation
+Multi-Signature Wallets
+Operational Accounting Risks
+Oracles
+Overcollateralized
+Peg
+Private Key
+Protocol Developers
+Protocol Investors
+Protocol Operators
+Protocol Reviews
+Protocol Users
+Public Key
+Real Yield
+Real-World Asset-backed Stablecoins ("RWA-backed")
+Rug Pull
+Sandwich Attacks
+Security Review
+Self-custody
+Smart Contract Operators
+Smart Contract Reviewers
+Smart Contracts
+Software Risks
+Stablecoin
+Subsidized Yield
+Supply Chain Risk
+Third Party Custody
+Time-weighted Average Pricing (or TWAP)
+Tokenomics
+Tokenomics Reports
+Tokenomics risk
+Tokens
+Total Supply
+Total Value Locked
+TradFi
+Treasury Attacks
+Treasury Value
+Trusted Bridges
+Trustless Bridges
+Wallets
+Wrapped tokens
+Yield farming
+A.4 Summary of Risks
+This section provides a summary of all requirements in this Specification.
+
+Lack of Standardization: The lack of standardization in data formats, protocols, and APIs in DeFi poses interoperability challenges for DeFi software. Integrating and normalizing software or data from diverse suppliers or sources can be complex and error-prone.
+
+Any software distributed over a network has to deal with Latency, the time that can elapse while the system synchronises across the network. In a Defi context, this introduces a risk of acting on outdated information, or of planned actions not being executed in a sufficiently timely manner.
+
+Smart Contract code is publicly visible when the contract is deployed on the blockchain. This allows hackers to look for bugs or configuration errors that they can exploit to attack the DeFi system and steal or destroy value.
+
+Smart Contract code deployed hurriedly with inadequate review, or insufficent time spent fixing and the issues discovered in a security review and retesting, can lead to Vulnerable Smart Contracts being exploited.
+
+On most Blockchains transactions can be read by anyone, it is usually very obvious when a Smart Contract used in DeFi is managing a large amount of value. This makes it easy to calculate the potential returns for a successful attack, drawing more attackers to high-value targets.
+
+Smart Contracts are often immutable when deployed, so conventional security techniques based on upgrading vulnerable programs are not always available.
+
+Upgradeable Smart Contracts introduce additional security risks and complications.
+
+It is possible for any user to interact directly on the blockchain with a Smart Contract. Inaccurate or insufficient documentation of the Smart Contracts introduces a risk that users interacting directly will do so in a manner that causes mistakes to happen.
+
+The blockchain stops working. Blockchains by design are expected to offer "24/7/365" service. This risk is real, but usually small in practice.
+
+A blockchain loses transaction records.
+
+The blockchain does not execute a contract's code correctly, resulting in incorrect balances.
+
+Where a blockchain can be controlled by a malicious actor or set of actors, digital assets could be stolen or destroyed by "brute force", such as a 51% attack.
+
+A key risk of all user-facing software is that the interface design or user experience is confusing, leading users to take actions that have consequences they did not expect. This risk can be amplified for users who rely on less common tools to access the interface, including users with disabilities who rely on assistive technology.
+
+Data Accuracy and Manipulation: DeFi oracles rely on data sources from outside the blockchain to provide information to Smart Contracts that can act automatically on the information. Inaccurate data can lead to Smart Contracts producing unexpected or undesired outcomes.
+
+"Single" Point of Failure: DeFi oracles that rely on too few or insecure data sources introduce a risk that manipulation or malfunctioning of that oracle can have significant adverse effects.
+
+Governance and Upgradability: The governance mechanisms of DeFi oracle protocols play a vital role in determining how data sources are selected, managed, and upgraded. Inadequate governance can lead to biased or compromised data feeds, impacting the reliability and integrity of the protocol relying on such oracles.
+
+A large pool of funds can act as a Honeypot, attracting attacks trying to steal the funds.
+
+The risk created by MEV is that a malicious actor distorts pricing in the protocol to maliciously extract value.
+
+If a small number of actors have significant control over governance votes, there is a risk they will execute a Rug Pull, stealing users' funds including the protocol treasury.
+
+In less severe cases of token concentration, those with a controlling share of governance can introduce protocol changes that disadvantage a particular group of token holders.
+
+If governance is excessively reliant on a single account e.g. because it has a key role as a Protocol Operator, and the key to that account is compromised (e.g. stolen by hacking or other means), an attacker can control the protocol.
+
+A similar risk can arise where the governance processes require a complex set of approvals, that there are insufficient incentives to participate in governance decisions, effectively paralysing governance because it becomes practically impossible to execute even necessary changes to the protocol.
+
+Mismanagement of Private Keys by all users is a risk.
+
+Token Issues that result in supply distortions can reduce the circulating supply, impact liquidity, or dilute the value of tokens, potentially limiting market participation
+
+Tokens with limited utility beyond speculation can face unstable demand, and a higher chance they are considered a security, with concomitant § 3.3 Compliance and Legal Risk.
+
+Inability to adjust tokenomics to changing market conditions and user needs can result in suboptimal performance.
+
+Regulators can consider it to be a violation of laws and regulations to interact with DeFi protocols as an activity, or with a given DeFi protocol or its Protocol Operators.
+
+Tokens considered as securities, rather than as utilities, are generally subject to different and stricter regulatory frameworks.
+
+Unclear tax implications for DeFi introduce a risk that tax treatment can be considered in violation of laws and recommendations.
+
+A Protocol might be considered in violation of AML regulation.
+
+Deliberate fraud, or incompetence, on the part of accounting staff or contractors can lead to direct losses, failure to recognise growing problems, and legal penalties.
+
+Weak internal standards for accounting can give rise to inconsistencies.
+
+Fixed valuation for assets that can in fact vary in price, whether Stablecoins or more volatile asset classes, can introduce arbitrage opportunities that can drain the value of a Protocol. This risk is more acute for assets other than Stablecoins, and can be compounded.
+
+In a fast moving market, like a market crash, insufficient demand from liquidators can mean liquidation fails to repay the lender in full, in other words creates Bad Debt. This risk is exacerbated by rehypothecation of collateral or high leverage.
+
+Prices of crypto assets can be highly volatile. This creates the risk of Impermanent Loss. This risk is usually exacerbated by perceptions of Liquidity Risk in a market.
+
+Because DeFi is still a largely unregulated space, the absence of legal certainty can increase market risk based on expectations of regulatory changes that affect participating in DeFi projects.
+
+Hacks, exploits of vulnerabilities discovered, or actions by Protocol Operators that is considered unethical or damaging, can rapidly and deeply undermine market confidence in a Protocol or Digital Asset. In the most serious case, these can also literally drain the value from a Protocol.
+
+Manipulative practices, such as wash trading, spoofing, or pump and dump schemes are a risk to Defi Protocols. Generally there is less protection against such manipulation than in TradFi, and the pseudonymous nature of DeFi means it can be more difficult to identify if a market is being manipulated.
+
+If the design of automated market makers (AMMs) on DEXs is unable to manage the volatility that they are exposed to appropriately, this can exacerbate Market Risk.
+
+Many DeFi systems, particularly Decentralized Lending Platforms, rely on sharing risk among many participants as a strategy to minimize it.
+
+Fixed liquidity adjustment mechanisms are often hard-coded into the structure of the DeFi Protocol. This limits the ability of DeFi applications to respond to unanticipated market conditions or user behavior.
+
+DeFi can be susceptible to excessive leverage of cryptocurrencies or stablecoins used as collateral on DeFi trading platforms.
+
+In DeFi markets liquidity is generally fragmented, posing heightened Liquidity Risk in individual liquidity and lending pools.
+
+A.5 Summary of Information Resources and Reports
+This section provides a summary of the recommendations for reporting in this Specification.
+
+Protocol Reports SHOULD be publicly available.
+
+Protocol Reports SHOULD cover up-to-date (i.e. as far as possible live) relevant financial figures (similar to those for a comparable TradFi business) covering at least:
+
+Sources of income (e.g. token issuance, lending, other activities)
+Frequency and value of rewards received and distributed e.g. to liquidity providers
+Expenditures
+Treasury Assets
+Liquidity Pool information
+Protocol Reports SHOULD outline current § 2. Key DeFi Metrics.
+
+Protocol Reports SHOULD provide historical price volatility data for underlying assets.
+
+Protocol Reports SHOULD cover liquidity pools' composition, including depth and diversity of liquidity providers.
+
+Protocol Reports SHOULD detail the results of stress tests and analyses related to liquidity shocks and adverse market conditions, including any identified vulnerabilities and proposed mitigations.
+
+Protocol Reports SHOULD include any security breaches or exploits that lead to fund losses, as well as any attacks that were detected and nullified.
+
+Protocol Reports SHOULD provide Technical Security updates for all software used by the Protocol, including all of:
+
+Technical standards met by the content reviewed or the review process
+Issues found
+How the identified vulnerabilities have been fixed, and
+Results of assessment carried out on the fixed software.
+Protocol Reports SHOULD cover accessibility and usability asessment of frontend software or interfaces regularly, and specifically for any upgrades or new software deployed.
+
+Protocol Reports SHOULD cover centralization tendencies of oracle networks the Protocol relies on.
+
+Protocol Reports SHOULD detail monitoring of bridge infrastructure and Smart Contracts used for token transfers between blockchains.
+
+Protocol Reports SHOULD describe the history of the underlying blockchain for any DeFi protocol.
+
+Protocols SHOULD describe the distribution and concentration of governance tokens.
+
+Protocol Reports SHOULD describe what is known of investors with a significant holding of tokens
+
+Protocol Reports SHOULD detail known related parties who transact between themselves, whose collective holding could qualify them as a key stakeholder.
+
+Protocol Reports SHOULD describe any updates or adjustments made to the tokenomics design.
+
+Protocol Reports SHOULD describe ongoing research efforts and collaborations with industry partners, for example in standards development organisations, focused on combating risks.
+
+Protocols reports SHOULD describe user education and awareness-raising efforts.
+
+Protocol Reports SHOULD detail measures taken to ensure compliance with relevant regulatory standards and guidelines, including at least:
+
+Anti-money laundering (AML), know your customer (KYC) and Key Stakeholder / Insider transparency requirements,
+Legal requirements specific to operating jurisdictions
+Accounting compliance to local requirements (e.g. GAAP, IFRS, etc.)
+Protocol Reports SHOULD provide a detailed overview of changes to the legal and regulatory landscape governing the specific jurisdictions in which the protocol operates.
+
+Protocol Reports SHOULD provide a detailed overview of the protocol's operations relevant to taxes that Protocol Investors or Protocol Users might be liable to pay.
+
+Protocol Reports SHOULD describe insurance cover for business interruption and/or loss of assets.
+
+Protocol Reports SHOULD outline the frequency of reporting, and how up-to-date reports are.
+
+Protocol Reports SHOULD describe market depth and price discovery mechanisms for the Protocol.
+
+Protocol Reports SHOULD describe the governance structure in detail, including
+
+decision-making processes,
+mechanisms for community involvement,
+emergency procedures,
+how Protocol changes are decided and implemented,
+the role of governance tokens,
+third parties the Protocol relies on, and
+Non-voting Governance Mechanisms such as the privileges held by Protocol Operators.
+Protocol Reports SHOULD outline a roadmap.
+
+Protocol Reports SHOULD describe the protocol's ability to adapt the tokenomics design.
+
+Protocol Reports SHOULD describe policies for the issue of new tokens.
+
+Protocol Reports SHOULD describe governance mechanisms not based on voting
+
+Protocol Reports SHOULD detail all third parties who perform important services.
+
+Protocol Reports SHOULD detail mechanisms to ensure compliance with relevant regulatory standards and guidelines, including
+
+anti-money laundering (AML), know your customer (KYC) and Key Stakeholder / Insider requirements,
+legal requirements specific to operating jurisdictions
+accounting compliance to local requirements (e.g. GAAP, IFRS, etc.)
+tax treatment strategies
+Protocol Reports SHOULD describe the measures implemented by the protocol to mitigate MEV risks, including at least:
+
+the use of advanced transaction sequencing techniques,
+anti-front-running mechanisms, and
+other solutions aimed at reducing the opportunities for malicious extraction of value.
+Protocol Reports SHOULD describe incident response and recovery plans for blockchain-related disruptions or failures.
+
+Protocol Reports SHOULD outline the measures in place to protect the protocol's treasury from external attacks.
+
+Protocol Reports SHOULD describe security measures and best practices implemented such as encryption, secure key management, multi-factor authentication, and adherence to industry security standards.
+
+Protocol Reports SHOULD cover the timeliness and latency of oracle data delivery, and measures in place to ensure accurate and real-time data feeds for time-sensitive transactions.
+
+Protocol Reports SHOULD describe measures to manage Credit Risk.
+
+Protocol Reports SHOULD detail liquidity management.
+
+Protocol Reports SHOULD disclose any practices or policies related to rehypothecation, or other forms of leveraging collateral.
+
+Protocol Reports SHOULD explain incentive mechanisms in the tokenomics design.
+
+Protocol Reports SHOULD articulate the utility of the token beyond speculation.
+
+Protocol Reports SHOULD outline key similarities and differences to other well-known Protocols.
+
+Protocol Reports SHOULD describe measures to detect and prevent market manipulation.
+
+A.6 Summary of Mitigation Strategies
+This section provides a summary of the recommendations for mitigating risk provided by this Specification.
+
+Protocols SHOULD maintain and monitor feedback channels to address user concerns and inquiries.
+
+Protocols SHOULD provide educational resources, guidelines, or best practices for users to protect themselves, and encourage responsible participation in the protocol.
+
+Protocols SHOULD encourage independent audits of all aspects of risk.
+
+Software SHOULD have third-party bug bounty programs.
+
+Software SHOULD follow standard best practices for responsible vulnerability disclosure.
+
+Protocols SHOULD publish policies for locking, burning and issuing tokens.
+
+Protocols SHOULD document the reconciliation process for each period to serve as the audit trail for their accounting process.
+
+Protocol Providers SHOULD produce accurate and timely financial information for reporting purposes.
+
+protocols SHOULD have incident response available "24/7".
+
+Protocols SHOULD actively develop threat models.
+
+DeFi Protocols SHOULD use automated real-time monitoring to detect attacks or increased risk.
+
+DeFi Protocols SHOULD use machine-learning and incident reports to identify attacks in progress or preparation.
+
+Software components SHOULD use secure channels to communicate.
+
+Software SHOULD encrypt data storage.
+
+Software SHOULD NOT store private data where it is globally accessible even if encrypted.
+
+Protocols SHOULD undergo a security review for all Software Components deployed as part of a DeFi protocol.
+
+Protocols SHOULD run Vulnerability Assessments for any upgrades to software components.
+
+Protocols that use Oracles SHOULD ensure that their Oracles have multiple sources of data, or use multiple Oracles, to ensure the redundancy allows for failover when necessary.
+
+Oracles SHOULD use Time-Weighted Average Pricing to detect and if necessary smooth sudden spikes.
+
+Protocols that use Oracles SHOULD ensure each Oracle can be updated or removed when necessary.
+
+Protocols SHOULD provide transaction ordering procedures that mitigate the Malicious Extraction of Value from other users' transactions.
+
+Protocols SHOULD perform Smart Contract security review, and any necessary rectification, before code is deployed to the blockchain.
+
+Protocols SHOULD assess the security of the underlying blockchain on which they deploy.
+
+Protocols SHOULD test frontend applications in a controlled environment before deployment or upgrades.
+
+Protocols SHOULD conduct regular stress tests and scenario analyses to assess the protocol's resilience to liquidity shocks and adverse market conditions, and identify possible mitigations for vulnerabilities found.
+
+Protocols SHOULD apply relevant standards, as specified in those standards.
+
+Software Security Reviews SHOULD align with industry standards.
+
+Smart Contracts used in a protocol written in solidity SHOULD have a security review according to the latest release of the EEA EthTrust Security Levels Specification [EthTrust].
+
+Protocol Developers SHOULD test software and API security against OWASP standards.
+
+DeFi front end interfaces SHOULD have a User Experience assessment that includes an accessibility review
+
+Web-based interfaces SHOULD conform to level AA or higher of [WCAG]
+
+Bridges SHOULD follow the suggestions of the EEA Crosschain Security Guidelines.
+
+Protocols, Investors and Users SHOULD ensure key management procedures are compliant with relevant standards to ensure robustness and survivability.
+
+Third-party key custodians SHOULD conform to the requirements of [CCSS], at the highest possible level.
+
+Incident reports SHOULD use the STIX format as far as possible to produce interoperable information.
+
+Protocols SHOULD ensure that ownership of governance tokens is distributed among independent parties, and resistant to concentration.
+
+Protocols SHOULD use Multi-Signature Wallets for governance decisions, that require more than one but fewer than all eligible parties to authorise a transaction.
+
+Protocols SHOULD balance voting quorum against governance token supply and distribution.
+
+Investors and users SHOULD conduct due diligence on Smart Contract Operators for the Smart Contracts that are part of a DeFi protocol.
+
+Protocol Providers SHOULD evaluate whether the individuals implementing and performing the controls have the right skills to effectively prevent or detect errors or fraud that could result in material misstatements in the financial statements.
+
+Protocol Providers SHOULD establish internal controls for accounting workflows.
+
+Protocols SHOULD monitor potential users accumulating stakes in their tokens.
+
+Protocols, investors and users SHOULD have a robust process in place to assess potentially relevant court decisions, laws and regulations, and monitor pending legislation and rule-making.
+
+DeFi users, investors and Protocols SHOULD participate in industry groups that focus on managing regulatory compliance and legal risk.
+
+Protocols SHOULD implement KYC/AML procedures appropriate to the jurisdictions relevant to their investors and users, including covering Protocol Operators.
+
+Protocols SHOULD explain why an asset is considered a security or not.
+
+Protocols SHOULD document their accounting practices and the rationales behind specific methods chosen to treat classes of assets and events.
+
+Protocols SHOULD document the reconciliation of reporting data against on-chain positions.
+
+Protocols SHOULD enable users to set slippage limits on transactions.
+
+Protocol Users and Protocol Investors SHOULD closely monitor their exposure and set appropriate risk limits.
+
+Protocol Users and Protocol Investors SHOULD monitor the development of Protocols, especially governance decisions
+
+Protocol Users and Protocol Investors SHOULD have access to real-time monitoring of core Protocol health metrics.
+
+Protocols SHOULD demonstrate Adequate Capital Reserves, including sufficent reserves for liquidity that are not leveraged.
+
+Users, protocols and investors SHOULD hold a range of tokens or other hedges against a liquidity problem in a given Protocol.
+
+A.7 Acknowledgments
+The EEA acknowledges and thanks the many people who contributed to the development of this version of the specification, and the organisations that supported them to make their contributions. Please advise us of any errors or omissions.
+
+This work has also drawn on the work of DeFiSafety on processes to review DeFi Protocols.
+
+This work was made possible inpart thanks to generous initial support from Consensys Software.
+
+B. References
+B.1 Informative references
+[CCSS]
+CryptoCurrency Security Standard. C4. URL: https://cryptoconsortium.org/cryptocurrency-security-standard-documentation/details/
+[CVE]
+CyberSecurity Vulnerabilities. MITRE. URL: https://www.cve.org
+[CWE]
+Common Weakness Enumeration. MITRE. URL: https://cwe.mitre.org/
+[EthTrust]
+EEA EthTrust Security Levels Specification v1. Enterprise Ethereum Alliance. URL: https://entethalliance.org/specs/ethtrust-sl/v1
+[fasb-expodraft]
+Proposed Accounting Standards Update — Intangibles — Goodwill and Other — Crypto Assets (Subtopic 350-60): Accounting for and Disclosure of Crypto Assets. Financial Standards Accounting Board. URL: https://www.fasb.org/Page/ShowPdf?path=Prop+ASU%E2%80%94Intangibles%E2%80%94Goodwill+and+Other%E2%80%94Crypto+Assets+%28Subtopic+350-60%29%E2%80%94Accounting+for+and+Disclosure+of+Crypto+Assets.pdf&title=Proposed+Accounting+Standards+Update%E2%80%94Intangibles%E2%80%94Goodwill+and+Other%E2%80%94Crypto+Assets+%28Subtopic+350-60%29%3A+Accounting+for+and+Disclosure+of+Crypto+Assets&acceptedDisclaimer=true&IsIOS=false&Submit=
+[ISO27001]
+ISO/IEC 27001 - Information security management systems. ISO. URL: https://www.iso.org/standard/27001
+[License]
+Apache license version 2.0. The Apache Software Foundation. URL: http://www.apache.org/licenses/LICENSE-2.0
+[ofac]
+Office of Foreign Assets Control. U.S. Department of Treasury. URL: https://ofac.treasury.gov/
+[owasp-apis]
+OWASP API Security Project. The Open Worldwide Application Security Project. URL: https://owasp.org/www-project-api-security/
+[owasp-asvs]
+OWASP Application Security Verification Standard. The Open Worldwide Application Security Project. URL: https://owasp.org/www-project-application-security-verification-standard/
+[owasp-masvs]
+OWASP Mobile Application Security Verification Standard. The Open Worldwide Application Security Project. URL: https://mas.owasp.org/MASVS/
+[SOC1]
+SOC 1® - SOC for Service Organizations: ICFRa. The American Institute of CPAs. URL: https://www.aicpa-cima.com/topic/audit-assurance/audit-and-assurance-greater-than-soc-1
+[SOC2]
+SOC 2® - SOC for Service Organizations: Trust Services Criteria. The American Institute of CPAs. URL: https://www.aicpa-cima.com/topic/audit-assurance/audit-and-assurance-greater-than-soc-2
+[STIX]
+Standardizing Cyber Threat Intelligence Information with the Structured Threat Information Expression (STIX). MITRE. URL: https://www.mitre.org/sites/default/files/publications/stix.pdf
+[WCAG]
+Web Content Accessibility Guidelines 1.0. Wendy Chisholm; Gregg Vanderheiden; Ian Jacobs. W3C. 5 May 1999. W3C Recommendation. URL: https://www.w3.org/TR/WAI-WEBCONTENT/
+[xchain-sec]
+EEA Crosschain Security Guidelines 1.0. Enterprise Ethereum Alliance. URL: https://entethalliance.github.io/crosschain-interoperability/crosschainsecurityguidelines.html
+↑

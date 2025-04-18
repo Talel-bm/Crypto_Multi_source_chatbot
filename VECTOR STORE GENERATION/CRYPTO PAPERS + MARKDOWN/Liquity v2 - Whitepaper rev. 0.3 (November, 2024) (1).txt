@@ -1,0 +1,464 @@
+# Liquity V2
+
+Whitepaper<sup>1</sup> v0.3 November 2024
+
+Changes: parameters updated, WETH replaced by ETH, revised liquidation penalty including diagram, fixed redemption fee section.
+
+| Abstract                                                                |    |
+|-------------------------------------------------------------------------|----|
+| Introduction<br>and<br>motivation                                       | 1  |
+| Competitive<br>landscape                                                | 3  |
+| Key<br>benefits<br>and<br>innovations                                   | 4  |
+| Multiple<br>LSTs<br>as<br>collateral                                    | 4  |
+| More<br>attractive<br>short-term<br>borrowing                           | 5  |
+| User-set<br>interest<br>rates<br>with<br>delegation<br>facility         | 5  |
+| Sustainable<br>real<br>yield                                            | 6  |
+| Improved<br>peg<br>dynamics                                             | 7  |
+| More<br>capital<br>efficient                                            | 7  |
+| Instant<br>leverage                                                     | 8  |
+| Separate<br>borrow<br>markets<br>and<br>collateral<br>risk<br>alignment | 8  |
+| Improved<br>redemption<br>mechanics                                     | 9  |
+| Protocol-incentivized<br>liquidity<br>(PIL)                             | 9  |
+| Peripheral<br>governance<br>with<br>time-base<br>voting<br>power        | 9  |
+| Functionality<br>and<br>use<br>cases                                    | 11 |
+| Borrowing                                                               | 12 |
+| Interest<br>rate<br>delegation                                          | 15 |
+| Delegation<br>for<br>other<br>actions                                   | 16 |
+| Stability<br>Pools                                                      | 17 |
+| Redemption<br>mechanism                                                 | 18 |
+| Critical<br>threshold<br>and<br>collateral<br>shutdown                  | 21 |
+
+# <span id="page-0-0"></span>Abstract
+
+Liquity V2 improves on the pioneering achievements of Liquity V1 by introducing a more capital efficient borrowing protocol that offers user-set interest rates and the ability to borrow against multiple collateral assets.
+
+Liquity V2 will support ETH as well as leading liquid staking tokens (LSTs) –Lido wrapped staked ETH, and Rocket Pool staked ETH– as collateral, and introduces a new stablecoin named BOLD. BOLD will be native to Ethereum and have minimal centralized collateral risks.
+
+<sup>1</sup> DISCLAIMER: The outlined ideas for the Liquity Protocol V2 are for informational purposes only. The scope and implementation may change and should not be relied upon. Note that whenever the term Liquity is used, it refers to the protocol in the version V1 or V2, not the company Liquity AG.
+
+BOLD inherits the resilience of LUSD, while also benefiting from improved peg dynamics and sustainable real yield. Peg stability and demand for the stablecoin are ensured by diverting the entirety of the protocol's revenues towards the Stability Pool and protocol incentivized liquidity (PIL) or similar incentives. By minting BOLD, users can gain instant liquidity or leverage, while managing their own borrowing costs relative to market conditions.
+
+In addition to introducing dynamic interest rates, Liquity V2 also welcomes a novel adaptive redemption mechanism around it, which helps facilitate a dynamic market between borrowers and stability seekers without the need for active governance.
+
+With minimal governance, and the core components of the system being immutable, Liquity V2 continues to prioritize security, decentralization, and user autonomy.
+
+# <span id="page-1-0"></span>Introduction and motivation
+
+In April 2021, Liquity introduced the world's first fully decentralized stablecoin that runs autonomously without human governance. With its attractive borrowing product allowing an LTV of up to 90.9%, Liquity V1 has successfully issued over \$4.75b in loans against ETH by minting its own stablecoin, LUSD. In addition to pushing the boundaries of capital efficiency and decentralization, Liquity has brought interest-free loans to the DeFi space, catering to the zero interest environment of the time.
+
+Liquity V1 also pioneered the first CDP system with a built-in redemption mechanism to create a stablecoin with a strong downward peg protection with no dependency on centralized collateral. The redemption feature allows *any* LUSD holder to exchange their stablecoins for \$1 worth of ETH. When LUSD is below peg, users can buy it for e.g. \$0.99 off the market and sell to the protocol for \$1.00 worth of collateral (see [blog](https://www.liquity.org/blog/understanding-liquitys-redemption-mechanism) post).
+
+This mechanism maintains a hard price floor around \$1 through direct arbitrage, and is key for LUSD's reputation as the most resilient stablecoin; many existing stablecoins have suffered from downward peg deviations due to high sell pressure.
+
+On the flipside, redemptions in Liquity V1 impact the riskiest borrowers as the redeemed LUSD is used to pay back the loans with the lowest collateral ratio in exchange for an equivalent amount of ETH. The affected borrowers see their collateral and debt go down equally, implying no net loss but a reduced exposure to ETH.
+
+Since the launch of Liquity V1, the macroeconomic situation and the interest rate environment in DeFi have changed drastically. Due to the skyrocketing market rates for stablecoins and a lack of a competitive yield source, LUSD has been subject to high sell pressure and soaring redemption volumes. Liquity V1 borrowers reacted by increasing their collateral ratios to previously unseen levels, just to avoid redemptions. This has seriously impaired Liquity V1's ability to provide capital-efficient loans.
+
+Being interest-free in nature and with its fixed-cost reward system, Liquity V1 has shown to work reliably in low interest environments, and it continues to be a viable option for
+
+borrowers in such scenarios. But in high interest rate situations, users tend to seek stablecoins with higher yields.
+
+To handle such market fluctuations effectively, Liquity V2 innovates by introducing user-set interest rates: the borrowers can choose their own interest rate, whatever they are willing to pay! Through user-set interest rates, redemptions can be neatly married with dynamic interest rates. Instead of targeting the loans with the lowest collateral ratio, redemptions will now be performed in ascending order of individual interest rates. Borrowers with low interest rates thus have the highest risk of being affected by redemptions. Users can freely manage their redemption risk by adjusting their interest rates relative to their peers (or delegate the management to third parties). Offering recurring interest rates, V2 is also more attractive to short-term borrowers than Liquity V1 with its upfront loan origination fees.
+
+Based on the borrowers' individual risk tolerance, the market will establish a range of individual interest rates. Borrowers willing to risk redemptions may set below-average rates for capital efficiency, whereas more risk averse or "set-and-forget" borrowers may opt for an above-average rate for peace of mind. Thus, the system handles borrowing volumes in a more adaptive way while allowing the protocol to earn a variable interest revenue on a continuous basis. The protocol can thus achieve flexible interest rates purely through market forces without relying on governance or algorithmically controlled interest rates.
+
+In contrast to Liquity V1 which only accepts ETH as collateral, Liquity V2 will further tap into a larger market by enabling users to borrow against ETH as well as several LSTs like e.g. Lido's wstETH. LSTs allow users to earn staking rewards on their staked assets while maintaining liquidity and have become increasingly popular as collateral in DeFi projects, including some of Liquity's forks.
+
+Due to Liquity V1's non-upgradeability, Liquity V2 will be a separate protocol issuing a new stablecoin, called BOLD, which inherits LUSD's most admired characteristics. BOLD will be safe, decentralized, unstoppable and directly redeemable. Beyond that, BOLD will benefit from improved peg dynamics and protocol-incentivized liquidity (PIL) on secondary markets.
+
+Building upon Liquity V1's proven achievements, Liquity V2 makes use of Stability Pools (one for every collateral) as its primary mechanism to liquidate undercollateralized loans with no detrimental price impact on the stablecoin. The interest payments will act as a sustainable real yield source for BOLD depositors and liquidity providers.
+
+These improvements make Liquity V2 fundamentally incentive aligned: the more you are willing to pay as a borrower, the more revenue you contribute to drive demand, stability and liquidity for BOLD as a stablecoin. User-set interest rates enable a capital efficient equilibrium between BOLD borrowers and holders in a fully market-driven manner. Borrowers can thus effectively benefit from Liquity V2's attractive loan to value (LTV) ratios which don't impact their redemption risk.
+
+When the demand for ETH-based loans or leverage is low and the demand for stability high, Liquity V2 enables loans for as low as 0.5% p.a. On the contrary, when demand for leverage is high, the protocol will offer ETH-loans at competitive market rates with attractive LTV
+
+ratios. With that, Liquity V2 offers a vastly improved borrowing experience, catering to a larger market while adhering to the high security standards known from Liquity V1.
+
+# <span id="page-3-0"></span>Competitive landscape
+
+The stablecoin landscape has evolved substantially in the 3 years since the launch of Liquity V1. While MakerDAO and its DAI stablecoin have drifted away from using only decentralized collateral by incorporating centralized stablecoins and real-world assets as backing, newcomers and established protocols alike have entered the scene with their own stablecoins.
+
+In 2023, Curve Finance introduced crvUSD, a stablecoin managed by algorithmic borrow rates and an autonomous peg-keeping mechanism, using Curve pools as collateral. Despite innovating on multiple fronts including soft-liquidations of borrowing positions, crvUSD doesn't have an efficient interest rate market between borrowers and stablecoin holders, but relies on manual incentives to obtain liquidity. Curve has experienced extremely volatile borrow rates, exceeding 50% at times.
+
+Following a more traditional model, Aave's GHO stablecoin can be borrowed against a host of collateral assets with the terms being subject to human governance. After an initial period of peg issues, Aave introduced a yield source for GHO depositors, eventually stabilizing its price. Ethena is pursuing the idea of delta-neutral stablecoins by partnering with centralized exchanges offering perpetual futures and requiring custodians to manage the collateral. Other entrants in the centralized stablecoin space like Mountain have introduced yield-bearing stablecoins, kicking back the yield earned by their reserves to stablecoin holders. It is yet to be seen how that will affect established actors such as Circle and Tether in the long run.
+
+In contrast to most of its competitors, BOLD is a resilient stablecoin by design:
+
+- only backed by crypto assets (no real world assets or custody by centralized players)
+- not subject to collateral changes and protocol upgrades (immutable)
+- directly redeemable (always convertible in a fast and liquid way)
+
+A successful stablecoin should not only be unstoppable and decentralized, but flexible enough to adapt to changing market environments like rising or falling interest rates. Furthermore, it should have utility as a store of value and unit of exchange. A stablecoin can only thrive if there's sufficient demand for holding and transacting with it. In times of positive interest rates, this may imply a need for a continuous yield source for the stablecoin.
+
+Existing stablecoins face challenges with regard to the efficiency, decentralization and/or sustainability of their yield sources. To date no existing solution has established an efficient interest-rate market between borrowers and stablecoin holders. Current protocols either rely on slow and potentially misaligned human governance to adjust interest rates (DAI, GHO), or they don't have a targeted way of using interest payments to drive demand for their stablecoin (crvUSD). Liquity V2 will change that. It is designed to strike an optimal balance between borrowers and stability seekers by flexibly adapting to the macroeconomic situation in a fully market-driven way.
+
+**Management and distribution of borrowing interest in different protocols:**
+
+![](_page_4_Figure_1.jpeg)
+
+# <span id="page-4-0"></span>Key benefits and innovations
+
+Liquity V2 offers a plethora of benefits and innovations:
+
+- Multiple LSTs as collateral
+- More attractive short-term borrowing
+- User-set interest rates with delegation facility
+- Sustainable real yield
+- Improved peg dynamics
+- More capital efficient: minimum collateral ratio of 110 % and no Recovery Mode
+- Instant leverage
+- Separate borrow markets and collateral risk alignment
+- Improved redemption mechanics
+- Protocol-incentivized liquidity (PIL)
+- Peripheral governance with time-based voting power
+- Multiple and transferable Troves per address
+
+## <span id="page-4-1"></span>Multiple LSTs as collateral
+
+Besides ETH, Liquity V2 will support Lido wrapped staked ETH (wstETH) and Rocket Pool staked ETH (rETH) as collateral. Borrowers can thus get liquidity or leverage while benefiting from auto-compounding staking yields.
+
+In contrast to most other Liquity forks with LST collaterals, V2 will represent each LST as a separate borrow market with its own interest rates and risk parameters. In this setup the risk for each LST will be reflected individually through the ratio between the debt collateralized by the LST and the size of the corresponding Stability Pool (SP). This enables the protocol to manage collateral risks in an autonomous way by directing BOLD redemptions mostly towards LSTs with lower SP backing in order to reduce the exposure to the corresponding LST. As with the user-determined interest rates, V2 is relying on market-driven mechanisms to manage and reduce the risk in the system.
+
+# <span id="page-5-0"></span>More attractive short-term borrowing
+
+With its vastly reduced upfront costs, Liquity V2 is inherently more attractive to short-term borrowers and leverage seekers. Borrowers will be paying an interest rate for the duration 2 of their loans, benefiting from greater flexibility in time.
+
+### <span id="page-5-1"></span>User-set interest rates with delegation facility
+
+Liquity V2's main innovation lies in its unique market-driven interest rate mechanism: borrowers may choose the rate they are willing to pay for their debts between 0.5% and 250%. While borrowers can freely set and adapt their individual interest rates, they are expected to manage their rates in line with the market to avoid redemptions.
+
+The redemption mechanism allows any holder to swap BOLD for \$1 worth of collateral (such as ETH and LSTs), enabling arbitrage whenever BOLD is trading below peg. The collateral paid to the redeemer is taken from the borrower who is paying the currently lowest interest rate 3 , in return for an equivalent reduction of their debt. Borrowers affected by redemptions lose exposure to their collateral even if they don't incur a financial loss at that moment. They are thus incentivized to keep their redemption risk low by paying sufficiently high interest rates compared to their peers.
+
+As the interest payments by borrowers determine the yield achievable on BOLD, the interest rates help stabilize the peg and redemption volumes under changing market conditions: when borrowers increase their rates to minimize redemption risk, it becomes more attractive to deposit BOLD to earn a share of the borrowers' interest payments. Higher interest rates thus result in a higher stablecoin yield, supporting BOLD's price when below peg and curtailing redemptions. Vice versa, when BOLD is above peg and the redemption risk is low, borrowers may safely reduce their rates, decreasing the stablecoin demand and its price.
+
+Borrowers and Stability Pool depositors (aka 'Earners') will thus act as the two sides of a dynamic interest rate market, obviating the need for controllers or human governance to manage a global interest rate. Liquity V2 behaves similarly to money markets but with opposite spreads: depending on the utilization and integration of the stablecoin in broader DeFi, the Stability Pool yields may even exceed the average interest rates, something that
+
+<sup>2</sup> See below "Interest rate adjustment and premature adjustment fee" regarding the fee charged on overly frequent interest rate adjustments.
+
+<sup>3</sup> For the given collateral. See below.
+
+isn't possible on money markets where borrowers always pay higher rates 4 than what the lenders receive.
+
+![](_page_6_Figure_1.jpeg)
+
+This yield amplification increases with the number of external use cases and utility for BOLD, by reducing the fraction of BOLD in the Stability Pool. An increasing demand for BOLD puts upward pressure on the peg, lowering the probability of redemptions. When redemptions are less likely, borrowers may lower their rates and get more attractive conditions. Liquity V2 should therefore benefit from decreasing interest rates the more it gets established in the broader DeFi ecosystem.
+
+We anticipate that borrowers will need to adjust their interest rates on a regular basis to manage their redemption risk and optimize their borrowing costs. As this may not be suitable for every borrower, the system offers a convenient, safe and gas-efficient way to delegate the management of the interest rate to third parties.
+
+The efficiency gain is due to a batching mechanism which allows the chosen delegate to adjust the interest rates of multiple borrowers at once in the same transaction. We expect that professional batch delegates will offer their services to Liquity V2 borrowers.
+
+# <span id="page-6-0"></span>Sustainable real yield
+
+As opposed to Liquity and most of its forks, Liquity V2 comes with a sustainable real-yield source in the form of continuous interest payments (in BOLD) by borrowers to Stability Pool depositors (Earners) and other recipients such as liquidity providers. This will ensure a base holding-demand for BOLD in the long run.
+
+<sup>4</sup> Disregarding the yield earned on the collateral, which in case of LSTs is close to 0%.
+
+# <span id="page-7-0"></span>Improved peg dynamics
+
+Liquity V2 employs a market driven monetary policy through user-set interest rates which can dynamically react to situations where BOLD is above or below \$1 5 .
+
+As the interest rate paid by borrowers serves as direct revenue for the BOLD stablecoin within the Stability Pool, it also has an impact on the stablecoin demand. When BOLD trades above \$1, borrowers will tend to reduce their rates due to the lower redemption risk. This makes borrowing more and holding BOLD less attractive.
+
+Conversely, when BOLD is below \$1, borrowers are exposed to a higher redemption risk and are likely to increase their rates. Borrowing thus becomes less attractive, while demand for BOLD should increase, pushing its price upward.
+
+![](_page_7_Figure_4.jpeg)
+
+# <span id="page-7-1"></span>More capital efficient
+
+Liquity V2 increases capital efficiency in high interest environments as the redemption risk can be managed by adjusting the interest rate rather than lowering the LTV of a Trove. While Liquity V1 has experienced very high collateral ratios due to excessive redemption risk in such scenarios, Liquity V2 will enable capital efficient borrowing in all market situations.
+
+Furthermore, Liquity V2 does away with the Recovery Mode known from Liquity V1, simplifying the liquidation logic and offering an effective minimum collateral ratio of 110% or
+
+<sup>5</sup> In Liquity V1, the borrowing costs are fixed, whereas the LQTY emissions for holding LUSD in the Stability Pool keep streaming regardless of LUSD's price, though tapering off over time. There are no specific mechanisms in place to encourage the release of LUSD from the Stability Pool when LUSD is above \$1.
+
+an LTV of 90.91% for ETH and 83.33% for wstETH and rETH. Borrowers don't have to worry about being liquidated at higher ratios if the system's total collateralization drops too low 6 .
+
+# <span id="page-8-0"></span>Instant leverage
+
+Liquity V2 allows users to enter a leveraged position in one transaction by using external flash loans and swapping the borrowed BOLD back using the incentivized liquidity pools. Users can thus achieve the desired leverage ratio in a predictable and cost-effective way without having to manually loop and swap the borrowed amounts, reducing gas costs and unforeseen losses due to slippage.
+
+# <span id="page-8-1"></span>Separate borrow markets and collateral risk alignment
+
+Each supported collateral asset constitutes an individual *borrow market* with its own group of borrowers and a separate Stability Pool (SP) backing their debts in return for a share of their interest payments. For example, stability depositors to the SP (ETH) only benefit from the interest paid by users borrowing against ETH, and receive liquidation gains in ETH accordingly.
+
+The borrow markets are separated in the following aspects:
+
+- Separate list of borrowers ordered by interest rates (relevant for redemption order)
+- Individual Stability Pool (relevant for liquidation)
+- Redistribution limited to the list of borrowers (no mixing of collateral among positions)
+
+This separation impacts the user groups in different ways:
+
+- **Borrowers:** collateral risk is limited to the collateral asset held by the borrower. Given that collateral assets are never redistributed across different borrow markets, a borrower isn't negatively affected by a failure of another collateral asset.
+- **BOLD holders:** as a multi-collateral stablecoin, BOLD is reliant on effective liquidations of undercollateralized loans in every borrow market to remain overcollateralized. Holders are thus subject to the risks of all supported collateral assets, facing a potential depegging of BOLD due to failed liquidations and bad debt in worst case scenarios 7 .
+- **Earners:** in case of a liquidation, SP depositors (Earners) only get exposure to the asset they have opted for. However, as BOLD holders they are similarly affected from a potential depegging.
+
+To manage the risks across multiple collateral assets, Liquity V2 incorporates an adaptive redemption logic, keeping "weaker" collateral assets in check compared to collaterals with larger SP backing. If only little BOLD is held in a certain SP compared to the outstanding debt amount for the respective collateral, it signals a lower confidence of the market in this LST.
+
+<sup>6</sup> In Liquity V1 the Recovery Mode is mainly needed due to a lack of sustainable yield for the Stability Pool, increasing reliance on redistribution for liquidations in the long term. Liquity V2 pays out a real yield, and aims to keep the Stability Pools backing sufficiently large through its adaptive redemption logic.
+
+<sup>7</sup> In a worst case scenario where a collateral asset suddenly breaks down or loses most of its value, not all affected borrowers may be liquidated in time.
+
+Thus, proportionally more redemptions will be executed against Troves collateralized with the respective LST (to shrink the exposure of the protocol to this collateral). Along with emergency measures and a collateral shutdown mechanism, this increases BOLD's overall resiliency.
+
+The segregated borrow markets and the redemption mechanic not only aim to align the risks across the LSTs with their different risk profiles and qualities (e.g. available liquidity), but allow each borrow market to establish its own range of interest rates 8 . Borrow markets may thus achieve competitive rates for every collateral asset with regard to the broader DeFi market.
+
+### <span id="page-9-0"></span>Improved redemption mechanics
+
+The market-driven interest rate mechanism and its positive effect on stablecoin demand aims to reduce redemption volumes overall compared to Liquity V1 where redemptions are based on the borrowers' collateral ratios.
+
+To mitigate potential losses for borrowers hit by redemptions, the redemption fee charged to the redeemer remains inside the affected Troves rather than being diverted as in Liquity V1. In other words, affected borrowers essentially benefit from a better BOLD:USD exchange due to the applicable fee.
+
+# <span id="page-9-1"></span>Protocol-incentivized liquidity (PIL)
+
+Having sufficient liquidity on DEXes is important especially for new stablecoins. Liquity V2 diverts on the protocol level 25% of the interest revenue from all borrow markets to various liquidity initiatives, based on a split determined through weekly gauge voting. With its sustainable Protocol Liquidity Incentives, we expect 10% of the BOLD supply to be available as liquidity across multiple AMMs like Curve or Uniswap.
+
+## <span id="page-9-2"></span>Peripheral governance with time-base voting power
+
+Liquity V2 is subject to minimal governance which is solely tasked with distributing the available liquidity incentives between the available DEX pairs through gauge voting. Governance has no other functions or powers as Liquity V2's smart contracts are immutable and not upgradeable. This ensures V2 users will benefit from the same predictability as in V1. Terms and conditions are set in stone, and are thus not subject to governance and potential take-overs.
+
+The BOLD stablecoin is an ERC-20 token exclusively minted through borrowing and burned when repaid or redeemed or in case of liquidation. Like LUSD, BOLD is unstoppable, market driven and managed autonomously by a non-upgradeable protocol.
+
+<sup>8</sup> Borrowing markets with less risky or higher quality collateral assets are likely to have lower interest rates than lower quality assets.
+
+Being immutable yet adaptable, Liquity V2 has a peripheral governance mechanism in charge of managing 25% of interest revenue from borrowing. Despite its limited scope, the mechanism comes with a number of innovations to align incentives, while making voting attractive and efficient.
+
+Liquidity incentives accrue in BOLD and are then distributed on a weekly cadence across any number of eligible initiatives, or target addresses. Their distribution is a function of gauge weighting: users with voting power can propose, weigh and veto initiatives as they see fit.
+
+Users accumulate voting power for protocol liquidity incentives by staking the LQTY token, without any locking mechanism. The voting power is proportional to the amount staked and the time passed since staking:
+
+![](_page_10_Figure_3.jpeg)
+
+#### **Voting Power = LQTY Staked × (Average** 9 **) Staking Age**
+
+The above chart shows the individual voting power of four users A, B, C and D that have staked the same amount at different times. By dividing their individual voting power by the total voting power, the protocol derives the relative voting power distribution:
+
+<sup>9</sup> If the user changes their stake later on (e.g. by staking more LQTY or unstaking a part of it), the protocol uses a time-weighted average to determine the stake's voting power.
+
+![](_page_11_Figure_0.jpeg)
+
+The longer a user stakes, the more voting power they risk losing if they decide to unstake. Over time, defection becomes increasingly costly, effectively binding stakers to the protocol and aligning their incentives without imposing the opportunity costs associated with traditional locking or vote escrow mechanisms.
+
+As V2 stakers also keep earning the LUSD and ETH rewards from V1, staking in V2 presents a unique dual-reward opportunity at no extra cost.
+
+# <span id="page-11-0"></span>Functionality and use cases
+
+The system overview diagram below provides a clear illustration of Liquity V2's internal mechanics, and how its components seamlessly integrate and function together:
+
+| Borrower<br>or delegates IR<br>management<br>><br>1<br>Delegate | Collateral<br>e.g. WETH<br>Sets Interest Rate<br>Stablecoin<br>BOLD<br>manages IR -> | Lists of troves with different collateral types<br>Troves<br>e.g. WETH<br>Positions containing<br>the borrower's<br>debt and collateral | Liquidated collateral<br>WETH<br>Liquidated debt<br>BOLD<br>Interest share in BOLD<br>(e.g. 75%)     | One SP per collateral type<br>Stability<br>Pool<br>e.g. WETH<br>Pools containing BOLD<br>for instant liquidations | BOLD<br>Liquidation gains<br>WETH | Earner<br>€           |
+|-----------------------------------------------------------------|--------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------|-----------------------------------|-----------------------|
+| Redeemer                                                        | BOLD<br>Mix of<br>ETH/LSTs                                                           |                                                                                                                                         | (e.g. 25%)<br>Interest share in BOLD used<br>as liquidity incentives<br>distributed via gauge voting | Multiple incentivized LP Pools<br>LP Pool (PIL)<br>e.g.<br>BOLD/USDC pool on<br>Curve or Uniswap                  | BOLD/USDC<br>Fees &<br>Incentives | Liquidity<br>Provider |
+
+# <span id="page-12-0"></span>Borrowing
+
+### Open Trove
+
+A user can open a Trove by depositing an eligible collateral asset <sup>10</sup> and borrow BOLD up to an LTV of 90.91% (for ETH 11 ) or 83.33% (for wstETH and rETH), implying a minimum collateral ratio of 110% or 120% respectively 12 .
+
+The system requires an additional deposit of 0.0375 ETH regardless of the chosen collateral, which is set aside to cover the gas costs of a potential liquidation.
+
+Importantly, the user needs to set an initial interest rate within a range of 0.5% and 250%. While the interest increases the borrower's debt over time, it is charged upfront for the first 7 days upon opening (see the section below).
+
+As an alternative to setting their own interest rates, borrowers may delegate interest rate management to a third party by selecting the delegate's address instead (see below "Interest rate delegation").
+
+Upon borrowing, the protocol mints the requested BOLD amount minus a small opening fee (see section below) and transfers it to the borrower's Ethereum address. The borrower is free to use and spend the BOLD to their liking.
+
+<sup>10</sup> The collateral assets are hardcoded and not subject to governance.
+
+<sup>11</sup> The provided ETH gets seamlessly wrapped into WETH and unwrapped upon withdrawal.
+
+<sup>12</sup> The system further requires a minimum debt of 2000 BOLD amount to open a position, making sure that redemptions remain gas-efficient.
+
+The Troves itself are represented as NFTs and can be freely transferred to other Ethereum addresses. The same address can thus hold multiple Troves.
+
+#### Interest rate adjustment and premature adjustment fee
+
+Borrowers are free to adjust their interest rates whenever they want. However, the borrower has to pay a premature adjustment fee if the adjustment happens within less than 7 days since the last adjustment 13 . The fee is equal to 7 days of average interest on the respective collateral branch 14 . It is charged in BOLD and is added to the Trove's debt. The same fee is charged when a new Trove is opened or when its debt is increased.
+
+This premature adjustment fee aims to impede Trove reopening and redemption evasion strategies where borrowers try to minimise their interest payments in an unfair manner 15 .
+
+#### Liquidation
+
+Borrowers are required to keep their Troves sufficiently collateralized at all times. A Trove whose LTV exceeds the respective liquidation threshold (maximum LTV) is subject to liquidation 16 .
+
+A liquidated Trove loses its entire outstanding debt and most of its collateral, usually amounting to 105% of the liquidated debt. Any remaining collateral after deduction of this liquidation penalty (5%) can be claimed by the liquidated borrower (except in case of a redistribution as explained below).
+
+Liquidations take place inside the borrow market of the liquidated collateral asset. Each collateral has its own liquidation threshold, Stability Pool and a separate redistribution procedure affecting only borrowers whose debt is backed by the same collateral as the liquidated position.
+
+The liquidation is performed in the following order of priority (e.g. for ETH):
+
+<sup>13</sup> The opening of the position and the delegation of rate management to a batch manager are treated the same way as an interest rate adjustment.
+
+<sup>14</sup> Example: if the average interest rate of a collateral branch is 5%, the borrower has to pay a fee of 0.096% on each adjustment.
+
+<sup>15</sup> Savvy users could anticipate upcoming redemptions (including via watching the mempool) and temporarily move their Trove's interest rate up to avoid redemption, allowing redemptions to hit another user, and then moving their interest back down shortly after.
+
+<sup>16</sup> Liquidation is a permissionless function that can be called by anybody.
+
+| Liquidation<br>mechanism |                                   | Situation                       | Recipients                                                    | Penalty                 |
+|--------------------------|-----------------------------------|---------------------------------|---------------------------------------------------------------|-------------------------|
+| 1.                       | Stability Pool<br>liquidation     | Stability Pool<br>contains BOLD | Stability Pool<br>depositors pro<br>rata to their<br>deposits | 5%*                     |
+| 2a.                      | Just-in-time<br>(JIT) liquidation | Stability Pool<br>empty         | User triggering<br>the liquidation                            |                         |
+| 2b.                      | Redistribution                    |                                 | All borrowers in<br>proportion to their<br>own collateral     | Remaining<br>collateral |
+
+**(1) Stability Pool contains BOLD:** an amount of BOLD corresponding to the borrower's debt is burned from the SP (ETH), while 105% of the nominal debt value 17 is taken from the borrower's collateral (ETH) and given to the SP (ETH). The affected SP depositors receive debt and collateral shares in proportion to their current BOLD deposits.
+
+If the Stability Pool doesn't cover the full entire debt and gets completely emptied by the liquidation, the system falls back to the following liquidations modes.
+
+**(2) Stability Pool is empty:** the liquidator can freely choose between two fallback liquidation modes for the debt exceeding the funds in the SP:
+
+> **(2a) Just-in-time (JIT) liquidation:** the liquidator deposits an amount of BOLD corresponding to the (remaining) debt to the Stability Pool and immediately triggers its liquidation in exchange for 105% of its nominal value in ETH 18 .
+
+- **(2b) Redistribution:** the liquidator triggers a redistribution, through which the Trove's entire debt and collateral (ETH) is redistributed to all fellow borrowers with ETH collateral, in proportion to their own collateral amounts. Thus, the respective borrowers will receive a share of the liquidated collateral and see their debts increase proportionally.
+
+As long as the liquidation is triggered slightly above the maximum LTV (e.g. 110% for ETH) and BOLD isn't substantially over peg, liquidations will be profitable for all recipients (SP, JIT
+
+<sup>17</sup> The protocol treats 1 BOLD as equal to \$1. However, the market value of BOLD may be higher than
+
+<sup>\$1</sup> especially in case of mass liquidations and liquidity crunches, reducing the liquidation gains.
+
+<sup>18</sup> The two operations can be combined in a single transaction.
+
+liquidator, fellow borrowers). Based on historical data from Liquity V1 19 , liquidations are likely to be net positive even with a 5% penalty in most cases.
+
+The increased liquidation penalty in case of a redistribution ensures that the Total Collateralization Ratio (TCR) of the respective borrow market doesn't drop as a result of the liquidation.
+
+Liquidation is a permissionless function that can also be called on a batch of multiple liquidatable Troves at once. The liquidator receives compensation for the effective gas costs plus a margin.
+
+## <span id="page-15-0"></span>Interest rate delegation
+
+The protocol offers two different ways of delegating interest rate management: individual and batch delegation. In both cases, the elected delegate can only change the interest rate, but not the borrower's debt or collateral.
+
+Batch management improves gas efficiency, allowing third parties to offer professional interest rate management services to borrowers.
+
+#### Individual delegation
+
+A borrower may choose to give interest rate update permissions to an individual delegate address (e.g. a friend or a hot wallet), setting a maximum and a minimum interest rate. This address then has only the ability to update the borrower's interest rate within the given range.
+
+Individual delegation can be useful for users that go on vacation or institutions that want to keep their Trove in cold storage but manage rates on a regular basis with a hot wallet.
+
+The borrower can revoke the delegation or update the range any time.
+
+### Batch delegation
+
+Batch delegates set and update a common interest rate for every Trove in the given batch at the same time. In contrast to individual delegation, a batch has a range (maximum and minimum interest rate) and a minimum waiting time between updates <sup>20</sup> preset by the delegate that can't be changed afterwards. Upon registration, a batch delegate can also set a management fee (e.g. 0.05%) that will be charged over time on the debt under management.
+
+To delegate interest rate management to a batch manager, the borrower has to choose an address that has been previously registered by the batch delegate. The borrower can revoke the delegation any time.
+
+<sup>19</sup> See the chart at https://dune.com/queries/81466/162640.
+
+<sup>20</sup> The waiting time protects the delegating borrowers from a rapid debt increase due to overly frequent interest rate adjustments leading to excessive premature adjustment fee charges.
+
+## <span id="page-16-0"></span>Delegation for other actions
+
+Separately from the interest rate delegation, the borrower may give permission to a third party address (which doesn't need to be an interest rate delegate) for other interactions with their Trove.
+
+#### Delegation of debt and collateral management
+
+The delegate gets full permission to manage the debt and collateral of the Trove by adding or removing collateral or by borrowing or repaying BOLD. This allows delegates to offer services such as automated leveraging or deleveraging without requiring the borrower to use a proxy contract.
+
+The Trove owner can specify a receiver address for the minted BOLD and collateral withdrawals, which may be different from the manager and the owner, according to their trust assumptions.
+
+### Delegation for benevolent actions
+
+With this more restricted delegation, the third party address only gets the permission to repay the borrower's debt or add more collateral. This 'benevolent' option is available by default to any Trove owner, and the owner can choose to restrict access to a single specified address or to the owner's address itself.
+
+Being trustless due to its beneficial nature, this type of delegation could facilitate novel use cases like interest rate swaps. For example, the Trove owner ("owner") and third party ("setter") could enter into an external agreement whereby the owner pays a fixed interest rate to the setter, and in turn the setter sets the rate and pays the prevailing rate of interest to avoid redemption.
+
+# <span id="page-16-1"></span>Stability Pools
+
+Stability Pools act as the first line of defence to absorb liquidations of Troves whose LTV exceeds the liquidation threshold (see above "Liquidation"). Compared with Liquity V1, each borrow market (ETH, wstETH and rETH) has its own SP, giving depositors the choice which collateral they would like exposure to in exchange for yield.
+
+The BOLD contained in the respective SP is used to pay back the liquidated borrower's debt in return for collateral, resulting in net liquidation gains up to 5% for the depositors 21 .
+
+Stability depositors (aka "Earners") in a given borrow market thus receive
+
+- 75% of the interest paid by borrowers in BOLD
+- Liquidation gains denominated in the respective collateral asset
+
+<sup>21</sup> Both the distributed collateral and the burned debt are determined pro rata to the size of the BOLD deposits.
+
+The following diagram illustrates the working of a single Stability Pool (e.g. for ETH borrow market), demonstrating the liquidation of a Trove whose LTV exceeds the liquidation threshold:
+
+![](_page_17_Figure_1.jpeg)
+
+### Deposit and withdrawal
+
+Users may deposit BOLD to an SP at any time and will start receiving the interest payments from the respective borrow market, while earning a proportional share of the liquidated collateral in return for the BOLD burned upon liquidations. Deposits can always be withdrawn unless there is undercollateralized debt in the respective borrow market, in which case the debt has to be liquidated first 22 .
+
+To compound or realize their yield, depositors can always claim<sup>23</sup> their accumulated interest and collateral gains.
+
+# <span id="page-17-0"></span>Redemption mechanism
+
+The redemption mechanism ensures that BOLD cannot drop below \$1 for sustained periods by allowing *any holder* to exchange 1 BOLD for \$1 worth of collateral.
+
+When BOLD is worth less than \$1 minus the current redemption fee, arbitrageurs will have an incentive to buy and redeem BOLD for profit, pushing its price back to parity and creating a price floor around \$1. As the redeemed BOLD is burned, redemptions reduce the stablecoin supply in lockstep with market demand.
+
+<sup>22</sup> Just as in Liquity V1, this restriction makes it harder for depositors to evade liquidations.
+
+<sup>23</sup> Depositors will also have the option between paying out the pending gains when adjusting their deposits or "stashing" them for a later claim.
+
+While the redemption mechanism fulfils the same purpose as in Liquity V1, it also has a number of differences with regard to the procedure, the effect on borrowers, the ordering, the fee, and the collateral split received by the redeemer.
+
+#### Collateral split
+
+In contrast to LUSD, BOLD is backed by a multitude of collaterals. Instead of letting the redeemer freely choose the collateral to redeem, Liquity V2 optimizes the process for economic safety. Redemptions are thus serviced through a collateral mix in a way that enhances the overall backing of BOLD.
+
+Upon confirmation, the protocol first splits the redeemed amount between all borrow markets, i.e. across the eligible collateral assets.
+
+The split is determined proportional to the "outside" portion of the respective debt, which is defined as the total debt borrowed against a certain collateral minus the size of the SP of the respective borrowing market.
+
+Given outside debt amounts of 100 BOLD, 50 BOLD and 100 BOLD respectively as an example, a redemption will result in a 40% (ETH) - 20% (wstETH) - 40% (rETH) split:
+
+![](_page_18_Figure_6.jpeg)
+
+### Order and effect on individual Troves
+
+Based on the determined collateral split, the redemption is then performed against the borrowers in all markets concurrently in ascending order of interest rates, starting with the Trove with the lowest rate. If the redeemed amount exceeds the debt of the currently lowest rate borrower, the protocol switches to the next higher rate borrower to redeem the remainder, and so on.
+
+![](_page_19_Figure_0.jpeg)
+
+The redeemed BOLD is used to repay the debt of Troves in exchange for an equivalent amount of collateral. The actual amount **c** of collateral that is taken out from the affected Trove(s) and given to the redeemer is calculated as follows:
+
+#### **c = m \* p<sup>c</sup> (t) \* (1 - f(t))**
+
+where **m** is the redeemed amount for the respective collateral and Trove, **p<sup>c</sup> (t)** the oracle price of the collateral in USD at current time **t**, and **f(t)** the current redemption fee. With that, the redemption fee is deducted from the withdrawn collateral and remains with the Trove owner.
+
+#### Redemption fee
+
+Liquity V2 applies the same formula for determining the redemption fee as Liquity V1, but with different parameters (larger spike and faster decay). The fee rate **f(t)** is the sum of a minimum fee **fmin** (= 0.5%) and an exponentially decaying base rate **b(t)** calculated for each time step **t<sup>i</sup>** as follows:
+
+#### **b(ti) = b(ti-1 ) \* β Δt**
+
+where **β** is a constant decay factor determined to result in a half-life of 6 hours**.**
+
+When a redemption transaction is executed at time **tj**, the base rate spikes depending on the redeemed amount **m** relative to the current BOLD supply **n** according to the following formula:
+
+#### **b(tj) = b(tj-1 ) + α \* m / n**
+
+where **α** is a constant spike parameter set to 1.
+
+<span id="page-20-0"></span>The resulting fee **f(tj) = fmin + b(tj)** is already applied to the redemption causing the spike.
+
+# Critical threshold and collateral shutdown
+
+The protocol aims to protect each borrow market from ever becoming undercollateralized in case of a collapsing collateral asset. It does so by throttling debt creation and collateral withdrawal in unhealthy markets and by shutting down the entire market as an ultima ratio.
+
+To that end, the protocol incorporates two safety thresholds for the system's Total Collateralization Ratio (TCR), using different thresholds for ETH and the LSTs:
+
+- Critical Threshold (CT)
+- Shutdown Threshold (ST)
+
+If the TCR of a borrow market falls below the respective CT (150% for ETH and 160% for wstETH and rETH), creation of new debt in the affected market is prohibited. Collateral withdrawal is allowed as long as it goes along with a debt repayment greater than or equal to the collateral withdrawn (i.e., as long as it's overall improving both individual CR and TCR). In the meantime, borrowers can still repay debt or top up their collateral. Unlike in Liquity V1's Recovery Mode, the liquidation threshold (maximum LTV) for individual Troves remains unchanged though, avoiding unnecessary liquidation of innocent borrowers 24 .
+
+If the TCR drops below the ST (110% for ETH and 120% for wstETH and rETH) or in case of an oracle failure 25 , the protocol triggers the shutdown of the respective borrow market and permanently disables all borrowing operations except for closing Troves. Upon triggering a collateral shutdown, the protocol enables and encourages single-collateral redemptions 26 , aimed at repaying the entire debt of the affected market as soon as possible. For that matter, users are allowed to redeem BOLD against the respective collateral at a more favorable exchange rate than the current oracle price of the LST, replacing the usual redemption fee by a positive discount of 2%. As long as BOLD isn't trading significantly above peg, arbitrageurs are thus incentivized to redeem all BOLD from the unhealthy borrow market 27 until its debt collapses to 0.
+
+Despite these extra incentives, there's no guarantee that the system will be able to successfully clear the entire debt backed by the respective collateral if its value has dropped extremely or keeps dropping too fast. In the worst case scenario, the system may end up with a portion of its BOLD supply becoming unbacked by debt.
+
+<sup>24</sup> As well as avoiding a number of potential edge cases and attack surfaces where the system is pulled into a state with TCR < CT.
+
+<sup>25</sup> Either the call to the oracle reverts, or returns 0, or returns a price that is too stale.
+
+<sup>26</sup> Besides that, regular redemptions and liquidations remain possible.
+
+<sup>27</sup> Note the incentive might disappear when BOLD is trading significantly above peg.
