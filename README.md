@@ -12,7 +12,7 @@ The techniques used in this project focus on scalability, meaning the system can
 
 *   **PDF Processing:** We used a high-performing and scalable method for converting PDF files to Markdown, combining **Marker** and **Gemini** (inspired by [community benchmarks](https://www.reddit.com/r/LocalLLaMA/comments/1jz80f1/i_benchmarked_7_ocr_solutions_on_a_complex/)).
 *   **Text Chunking:** We employed the recursive chunker from the **Chonky library** to segment the text effectively before indexing it into the vector store.
-*   **Intelligent Routing:** We fine-tuned a **ModernBERT** model to act as a router between the `"llm"`, `"rag"`, and `"web_search"` options.
+*   **Intelligent Routing:** We [fine-tuned a **ModernBERT**](https://huggingface.co/TBM99/Router-RAG-v2) model to act as a router between the `"llm"`, `"rag"`, and `"web_search"` options.
     *   This router was trained on a synthetic dataset (generated with Gemini) focused on specific **keywords** found within the source documents.
     *   Its purpose is to direct queries to the RAG system *only* when the answer likely requires information from those specific documents.
     *   Any unrelated question, even if related to DeFi/crypto in general, is directed to the base LLM.
