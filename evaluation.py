@@ -33,10 +33,10 @@ except ImportError:
 # --- Configuration & Initialization ---
 # WARNING: Hardcoding keys is insecure. Use environment variables.
 LANGSMITH_TRACING = True
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "AIzaSyCdKtfn0DKBGM2-gHz7QhC2gQ9n_RwCp24")
-SERPER_API_KEY = os.getenv("SERPER_API_KEY", "d344269243f014bd0948537d081cc0178c23faa4")
-LANGSMITH_API_KEY = os.getenv("LANGSMITH_API_KEY", "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")
-DEEPSEEK_API = os.getenv("DEEPSEEK_API", "sk-8330a59f461b4015a37b647e9b1ce4c6")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+SERPER_API_KEY = os.getenv("SERPER_API_KEY", "")
+LANGSMITH_API_KEY = os.getenv("LANGSMITH_API_KEY", "")
+DEEPSEEK_API = os.getenv("DEEPSEEK_API", "")
 
 CHROMA_DB_PATH = "./DOC DB" # Assumes this directory exists and has the DB
 CHROMA_COLLECTION_NAME = "crypto_db"
