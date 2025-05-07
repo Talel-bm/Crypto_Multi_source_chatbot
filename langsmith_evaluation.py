@@ -23,10 +23,10 @@ from funcs import *
 # --- Configuration & Initialization ---
 
 # Using uppercase for constants is conventional
-GEMINI_API_KEY = "AIzaSyCdKtfn0DKBGM2-gHz7QhC2gQ9n_RwCp24" # WARNING: Hardcoded API Key
-SERPER_API_KEY = "d344269243f014bd0948537d081cc0178c23faa4" # WARNING: Hardcoded API Key
-LANGSMITH_API_KEY = "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" # WARNING: Hardcoded API Key
-DEEPSEEK_API = "sk-8330a59f461b4015a37b647e9b1ce4c6"
+GEMINI_API_KEY = "" # WARNING: Hardcoded API Key
+SERPER_API_KEY = "" # WARNING: Hardcoded API Key
+LANGSMITH_API_KEY = "" # WARNING: Hardcoded API Key
+DEEPSEEK_API = ""
 
 # Use a more standard path name (avoiding spaces)
 CHROMA_DB_PATH = "./doc_db" # Corrected path name convention
